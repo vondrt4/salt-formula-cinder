@@ -456,19 +456,21 @@ Volume vmware related options:
     cinder:
       controller:
         enabled: true
-        backend:
-          hp3par_backend:
-            type_name: hp3par
-            backend: hp3par_backend
-            user: hp3paruser
-            password: something
-            url: http://10.10.10.10/api/v1
-            cpg: OpenStackCPG
-            host: 10.10.10.10
-            login: hp3paradmin
-            sanpassword: something
-            debug: True
-            snapcpg: OpenStackSNAPCPG
+        types:
+        - name: hp3par
+          backend: hp3par_backend
+        storage:
+          user: hp3paruser
+          password: something
+          url: http://10.10.10.10/api/v1
+          cpg: OpenStackCPG
+          host: 10.10.10.10
+          login: hp3paradmin
+          sanpassword: something
+          debug: True
+          snapcpg: OpenStackSNAPCPG
+      volume:
+        #the same
 
 * Cinder setup with Fujitsu Eternus:
 
