@@ -211,6 +211,8 @@ Cinder setup with HP3par
           sanpassword: something
           debug: True
           snapcpg: OpenStackSNAPCPG
+      volume:
+        #the same
 
 Cinder setup with Fujitsu Eternus
 
