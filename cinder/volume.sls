@@ -1,5 +1,5 @@
 {%- from "cinder/map.jinja" import volume with context %}
-{%- if volume.enabled %}
+{%- if volume.enabled is defined and volume.enabled %}
 
 include:
 - cinder.user
@@ -18,7 +18,7 @@ cinder_volume_packages:
   - require_in:
     - service: cinder_volume_services
 
-{%- if pillar.cinder.controller is not defined or not pillar.cinder.controller.enabled %}
+{%- if pillar.cinder.controller.enabled is not defined or not pillar.cinder.controller.enabled %}
 
 /etc/cinder/cinder.conf:
   file.managed:
