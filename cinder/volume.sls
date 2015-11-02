@@ -1,5 +1,5 @@
 {%- from "cinder/map.jinja" import volume with context %}
-{%- if volume.enabled %}
+{%- if volume.enabled is defined and volume.enabled %}
 
 {%- if not pillar.cinder.get('controller', {}).get('enabled', False) %}
 {%- set user = volume %}
