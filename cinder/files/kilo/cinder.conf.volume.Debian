@@ -83,10 +83,6 @@ notification_topics = {{ volume.notification.topics }}
 
 {%- endif %}
 
-volume_name_template = volume-%s
-
-#volume_group = vg_cinder_volume
-
 volumes_dir = /var/lib/cinder/volumes
 log_dir=/var/log/cinder
 
@@ -415,6 +411,8 @@ rbd_secret_uuid={{ volume.storage.secret_uuid }}
 
 [{{ type.backend }}]
 
+volume_backend_name={{ type.backend }}
+
 hp3par_api_url={{ volume.storage.url }}
 
 # 3PAR Super user username
@@ -458,13 +456,12 @@ hp3par_debug={{ volume.storage.debug }}
 hp3par_iscsi_chap_enabled=false
 
 # The CPG to use for Snapshots for volumes. If empty hp3par_cpg will be used.
-hp3par_snap_cpg={{ volume.storage.snapcpg }}
+hp3par_cpg_snap={{ volume.storage.snapcpg }}
 
 # Time in hours to retain a snapshot. You can't delete it before this expires.
-hp3par_snapshot_retention=2
-
+#hp3par_snapshot_retention=2
 # Time in hours when a snapshot expires and is deleted. This must be larger than retention.
-hp3par_snapshot_expiration=4
+#hp3par_snapshot_expiration=4
 
 {%- endfor %}
 
