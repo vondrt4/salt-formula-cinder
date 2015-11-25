@@ -40,15 +40,15 @@ cinder_syncdb:
 
 cinder_type_create_{{ type.name }}:
   cmd.run:
-  - name: "source /root/keystonerc; cinder type-create {{ type.name }}"
-  - unless: "source /root/keystonerc; cinder type-list | grep {{ type.name }}"
+  - name: ". /root/keystonerc; cinder type-create {{ type.name }}"
+  - unless: ". /root/keystonerc; cinder type-list | grep {{ type.name }}"
   - require:
     - service: cinder_controller_services
 
 cinder_type_update_{{ type.name }}:
   cmd.run:
-  - name: "source /root/keystonerc; cinder type-key {{ type.name }} set volume_backend_name={{ type.get('backend', type.name) }}"
-  - unless: "source /root/keystonerc; cinder extra-specs-list | grep \"{u'volume_backend_name': u'{{ type.get('backend', type.name) }}'}\""
+  - name: ". /root/keystonerc; cinder type-key {{ type.name }} set volume_backend_name={{ type.get('backend', type.name) }}"
+  - unless: ". /root/keystonerc; cinder extra-specs-list | grep \"{u'volume_backend_name': u'{{ type.get('backend', type.name) }}'}\""
   - require:
     - cmd: cinder_type_create_{{ type.name }}
 
