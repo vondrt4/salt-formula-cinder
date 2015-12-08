@@ -70,6 +70,7 @@ volume_clear={{ volume.wipe_method }}
 
 {%- if volume.notification %}
 control_exchange = cinder
+instance_usage_audit_period = hour
 
 {%- if volume.notification.driver is defined %}
 notification_driver = {{ volume.notification.driver }}

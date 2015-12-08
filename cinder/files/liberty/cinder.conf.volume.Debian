@@ -79,6 +79,7 @@ notification_topics = {{ volume.notification.topics }}
 {%- endif %}
 {%- elif volume.notification %}
 notification_driver = messagingv2
+instance_usage_audit_period = hour
 {%- endif %}
 
 volume_name_template = volume-%s

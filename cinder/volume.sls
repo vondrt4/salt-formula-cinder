@@ -172,6 +172,17 @@ cinder_volume_services:
     - file: /etc/cinder/cinder.conf
     - file: /etc/cinder/api-paste.ini
 
+{%- if volume.notification %}
+
+cinder_metering_cron:
+  file.managed:
+  - name: /etc/cron.hourly/cinder-volume-usage-audit
+  - source: salt://cinder/files/cinder-volume-usage-audit.cron
+  - mode: 755
+  - template: jinja
+
+{%- endif %}
+
 {%- if volume.backend is defined %}
 
 {%- for backend_name, backend in volume.get('backend', {}).items() %}
