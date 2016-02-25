@@ -459,6 +459,8 @@ hp3par_iscsi_chap_enabled=false
 # The CPG to use for Snapshots for volumes. If empty hp3par_cpg will be used.
 hp3par_cpg_snap={{ volume.storage.snapcpg }}
 
+use_multipath_for_image_xfer = True
+
 # Time in hours to retain a snapshot. You can't delete it before this expires.
 #hp3par_snapshot_retention=2
 # Time in hours when a snapshot expires and is deleted. This must be larger than retention.
