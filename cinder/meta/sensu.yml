@@ -1,5 +1,5 @@
 {%- from "cinder/map.jinja" import controller with context %}
-{%- set region = controller.identity.region %}
+{%- set region = controller.get('identity', {}).get('region', 'RegionOne') %}
 check:
   local_cinder_api_proc:
     command: "PATH=$PATH:/usr/lib64/nagios/plugins:/usr/lib/nagios/plugins check_procs -C cinder-api -u cinder -c 1:1024"
