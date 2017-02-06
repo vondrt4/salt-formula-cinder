@@ -47,6 +47,15 @@ enabled_backends={% for type in volume.get('types', []) %}{{ type.backend }}{% i
 
 {%- endif %}
 
+{%- if volume.storage_availability_zone is defined %}
+storage_availability_zone={{volume.storage_availability_zone}}
+{%- endif %}
+
+{%- if volume.default_availability_zone is defined %}
+default_availability_zone={{volume.default_availability_zone}}
+{%- endif %}
+
+
 #RPC response timeout recommended by Hitachi
 rpc_response_timeout=3600
 
