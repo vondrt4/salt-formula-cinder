@@ -54,6 +54,7 @@ cinder-volume to role volume.
             pool: SAS7K2
         audit: 
           enabled: false
+        osapi_max_limit: 500
 
     cinder:
       volume:

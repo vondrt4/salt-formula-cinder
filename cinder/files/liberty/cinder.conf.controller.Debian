@@ -29,6 +29,7 @@ allow_availability_zone_fallback = {{ controller.get('availability_zone_fallback
 #glance_api_insecure=False
 
 osapi_volume_listen={{ controller.osapi.host }}
+osapi_max_limit={{ controller.osapi_max_limit|default('1000') }}
 
 glance_host={{ controller.glance.host }}
 glance_port={{ controller.glance.port }}
