@@ -407,6 +407,24 @@ Enable auditing filter, ie: CADF
           filter_factory: 'keystonemiddleware.audit:filter_factory'
           map_file: '/etc/pycadf/cinder_api_audit_map.conf'
 
+
+Cinder setup with custom availability zones:
+
+.. code-block:: yaml
+
+    cinder:
+      controller:
+        default_availability_zone: my-default-zone
+        storage_availability_zone: my-custom-zone-name
+    cinder:
+      volume:
+        default_availability_zone: my-default-zone
+        storage_availability_zone: my-custom-zone-name
+
+The default availability zone is used when a volume has been created, without specifying a zone in the create request. (this zone must exist in your configuration obviously)
+The storage availability zone is the actual zone where the node belongs to. Make sure to specify this per node.
+Check the documentation of OpenStack for more information
+
 Documentation and Bugs
 ============================
 

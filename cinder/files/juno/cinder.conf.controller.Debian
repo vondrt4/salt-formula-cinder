@@ -47,6 +47,15 @@ enabled_backends={% for type in controller.get('types', []) %}{{ type.backend }}
 
 {%- endif %}
 
+{%- if controller.storage_availability_zone is defined %}
+storage_availability_zone={{controller.storage_availability_zone}}
+{%- endif %}
+
+{%- if controller.default_availability_zone is defined %}
+default_availability_zone={{controller.default_availability_zone}}
+{%- endif %}
+
+
 #RPC response timeout recommended by Hitachi
 rpc_response_timeout=3600
 
