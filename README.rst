@@ -135,6 +135,8 @@ Client-side RabbitMQ HA setup for volume component
 
 Cinder setup with zeroing deleted volumes
 
+.. code-block:: yaml
+
     cinder:
       controller:
         enabled: true
@@ -420,6 +422,17 @@ Cinder setup with custom availability zones:
       volume:
         default_availability_zone: my-default-zone
         storage_availability_zone: my-custom-zone-name
+
+public_endpoint and osapi_volume_base_url parameters:
+"public_endpoint" is used for configuring versions endpoint,
+"osapi_volume_base_URL" is used to present Cinder URL to users.
+They are useful when running Cinder under load balancer in SSL.
+
+.. code-block:: yaml
+
+    cinder:
+      controller:
+        public_endpoint_address: https://${_param:cluster_domain}:8776
 
 The default availability zone is used when a volume has been created, without specifying a zone in the create request. (this zone must exist in your configuration obviously)
 The storage availability zone is the actual zone where the node belongs to. Make sure to specify this per node.
