@@ -1,4 +1,6 @@
 parameters:
+  _param:
+    keystone_cinder_endpoint_type: internalURL
   kubernetes:
     control:
       configmap:
@@ -29,6 +31,7 @@ parameters:
                   tenant: service
                   user: cinder
                   password: ${_param:keystone_cinder_password}
+                  endpoint_type: ${_param:keystone_cinder_endpoint_type}
                 glance:
                   host: ${_param:glance_service_host}
                   port: 9292

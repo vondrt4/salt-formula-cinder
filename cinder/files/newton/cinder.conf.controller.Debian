@@ -78,7 +78,7 @@ verbose=True
 lock_path=/var/lock/cinder
 
 nova_catalog_admin_info = compute:nova:adminURL
-nova_catalog_info = compute:nova:publicURL
+nova_catalog_info = compute:nova:{{ server.identity.get('endpoint_type', 'publicURL') }}
 
 osapi_volume_extension = cinder.api.contrib.standard_extensions
 

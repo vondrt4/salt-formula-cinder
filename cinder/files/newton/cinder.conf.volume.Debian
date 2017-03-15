@@ -76,7 +76,7 @@ use_syslog=false
 verbose=True
 
 nova_catalog_admin_info = compute:nova:adminURL
-nova_catalog_info = compute:nova:publicURL
+nova_catalog_info = compute:nova:{{ server.identity.get('endpoint_type', 'publicURL') }}
 
 [oslo_messaging_notifications]
 {%- if volume.notification is mapping %}

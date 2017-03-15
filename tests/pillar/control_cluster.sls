@@ -19,6 +19,7 @@ cinder:
       tenant: service
       user: cinder
       password: password
+      endpoint_type: internalURL
     glance:
       host: 127.0.0.1
       port: 9292
