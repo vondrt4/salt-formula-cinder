@@ -142,17 +142,14 @@ signing_dir=/tmp/keystone-signing-cinder
 signing_dirname=/tmp/keystone-signing-cinder
 identity_uri = http://{{ controller.identity.host }}:35357/v3
 revocation_cache_time = 10
-auth_section = generic_password
-
-[generic_password]
 auth_plugin = password
 user_domain_id = {{ controller.identity.get('domain', 'default') }}
 project_domain_id = {{ controller.identity.get('domain', 'default') }}
 project_name = {{ controller.identity.tenant }}
 username = {{ controller.identity.user }}
 password = {{ controller.identity.password }}
-auth_uri=http://{{ controller.identity.host }}:5000/v3
-auth_url=http://{{ controller.identity.host }}:35357/v3
+auth_uri=http://{{ controller.identity.host }}:5000/
+auth_url=http://{{ controller.identity.host }}:35357/
 
 {%- endif %}
 
