@@ -41,6 +41,12 @@ cinder:
         port: 11211
       - host: 127.0.0.1
         port: 11211
+    storage:
+      engine: storwize
+      host: 192.168.0.1
+      port: 22
+      user: username
+      password: pass
 
     audit:
       filter_factory: 'keystonemiddleware.audit:filter_factory'

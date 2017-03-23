@@ -15,8 +15,10 @@ cinder_volume_packages:
   - group: cinder
   - require:
     - pkg: cinder_volume_packages
+  {%- if not grains.get('noservices', False) %}
   - require_in:
     - service: cinder_volume_services
+  {%- endif %}
 
 {%- if not pillar.cinder.get('controller', {}).get('enabled', False) %}
 
@@ -56,6 +58,8 @@ cinder_volume_services:
 
 {%- if backend.engine in ['iscsi' , 'hp_lefthand'] %}
 
+{%- if grains.get('virtual_subtype', None) not in ['Docker', 'LXC'] %}
+
 cinder_iscsi_packages_{{ loop.index }}:
   pkg.installed:
   - names:
@@ -72,6 +76,8 @@ cinder_iscsi_packages_{{ loop.index }}:
   - require:
     - pkg: cinder_iscsi_packages
 
+{%- if not grains.get('noservices', False) %}
+
 cinder_scsi_service:
   service.running:
   - names:
@@ -80,6 +86,10 @@ cinder_scsi_service:
   - enable: true
   - watch:
     - file: /etc/default/iscsitarget
+
+{%- endif %}
+
+{%- endif %}
 
 {%- endif %}
 
@@ -113,9 +123,12 @@ hp3parclient:
 
 {%- if backend.engine == 'fujitsu' %}
 
+{%- if grains.get('virtual_subtype', None) not in ['Docker', 'LXC'] %}
+
 cinder_driver_fujitsu_{{ loop.index }}:
   pkg.latest:
     - name: cinder-driver-fujitsu
+    - refresh: true
 
 /etc/cinder/cinder_fujitsu_eternus_dx_{{ backend_name }}.xml:
   file.managed:
@@ -125,6 +138,8 @@ cinder_driver_fujitsu_{{ loop.index }}:
       backend_name: "{{ backend_name }}"
   - require:
     - pkg: cinder-driver-fujitsu
+
+{%- endif %}
 
 {%- endif %}
 
@@ -154,6 +169,8 @@ cinder_iscsi_packages:
   - require:
     - pkg: cinder_iscsi_packages
 
+{%- if not grains.get('noservices', False) %}
+
 cinder_scsi_service:
   service.running:
   - names:
@@ -162,6 +179,8 @@ cinder_scsi_service:
   - enable: true
   - watch:
     - file: /etc/default/iscsitarget
+
+{%- endif %}
 
 {%- endif %}
 
@@ -193,6 +212,8 @@ hp3parclient:
 
 {%- endif %}
 
+{%- if grains.get('virtual_subtype', None) not in ['Docker', 'LXC'] %}
+
 {%- if volume.storage.engine == 'fujitsu' %}
 
 cinder_driver_fujitsu:
@@ -211,6 +232,8 @@ cinder_driver_fujitsu:
     - pkg: cinder-driver-fujitsu
 
 {%- endfor %}
+
+{%- endif %}
 
 {%- endif %}
 
