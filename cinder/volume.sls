@@ -58,8 +58,6 @@ cinder_volume_services:
 
 {%- if backend.engine in ['iscsi' , 'hp_lefthand'] %}
 
-{%- if grains.get('virtual_subtype', None) not in ['Docker', 'LXC'] %}
-
 cinder_iscsi_packages_{{ loop.index }}:
   pkg.installed:
   - names:
@@ -89,7 +87,6 @@ cinder_scsi_service:
 
 {%- endif %}
 
-{%- endif %}
 
 {%- endif %}
 
@@ -123,8 +120,6 @@ hp3parclient:
 
 {%- if backend.engine == 'fujitsu' %}
 
-{%- if grains.get('virtual_subtype', None) not in ['Docker', 'LXC'] %}
-
 cinder_driver_fujitsu_{{ loop.index }}:
   pkg.latest:
     - name: cinder-driver-fujitsu
@@ -138,8 +133,6 @@ cinder_driver_fujitsu_{{ loop.index }}:
       backend_name: "{{ backend_name }}"
   - require:
     - pkg: cinder-driver-fujitsu
-
-{%- endif %}
 
 {%- endif %}
 
@@ -212,8 +205,6 @@ hp3parclient:
 
 {%- endif %}
 
-{%- if grains.get('virtual_subtype', None) not in ['Docker', 'LXC'] %}
-
 {%- if volume.storage.engine == 'fujitsu' %}
 
 cinder_driver_fujitsu:
@@ -232,8 +223,6 @@ cinder_driver_fujitsu:
     - pkg: cinder-driver-fujitsu
 
 {%- endfor %}
-
-{%- endif %}
 
 {%- endif %}
 
