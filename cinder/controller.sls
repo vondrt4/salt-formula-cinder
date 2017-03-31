@@ -53,6 +53,18 @@ cinder_syncdb:
 
 {%- for backend_name, backend in controller.get('backend', {}).iteritems() %}
 
+{%- if backend.engine is defined and backend.engine == 'nfs' %}
+/etc/cinder/nfs_shares:
+  file.managed:
+  - source: salt://cinder/files/{{ controller.version }}/nfs_shares
+  - defaults:
+      backend: {{ backend|yaml }}
+  - template: jinja
+  - require:
+    - pkg: cinder_controller_packages
+
+{%- endif %}
+
 cinder_type_create_{{ backend_name }}:
   cmd.run:
   - name: "source /root/keystonerc; cinder type-create {{ backend.type_name }}"

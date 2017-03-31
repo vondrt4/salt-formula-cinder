@@ -232,6 +232,26 @@ Cinder setup for IBM Storwize
             multipath: true
             pool: SAS15K
 
+
+Cinder setup with NFS
+
+.. code-block:: yaml
+
+    cinder:
+      controller:
+        enabled: true
+        default_volume_type: nfs-driver
+        backend:
+          nfs-driver:
+            engine: nfs
+            type_name: nfs-driver
+            volume_group: cinder-volume
+            path: /var/lib/cinder/nfs
+            devices:
+            - 172.16.10.110:/var/nfs/cinder
+            options: rw,sync
+
+
 Cinder setup with Hitachi VPS
 
 .. code-block:: yaml
