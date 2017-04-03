@@ -28,9 +28,18 @@ os_region_name={{ controller.identity.region }}
 
 osapi_volume_listen={{ controller.osapi.host }}
 
+glance_api_servers = http://{{ controller.glance.host }}:{{ controller.glance.port }}
+
 glance_host={{ controller.glance.host }}
 glance_port={{ controller.glance.port }}
 glance_api_version=2
+
+enable_v3_api = True
+
+os_privileged_user_name={{ controller.identity.user }}
+os_privileged_user_password={{ controller.identity.password }}
+os_privileged_user_tenant={{ controller.identity.tenant }}
+os_privileged_user_auth_url=http://{{ controller.identity.host }}:5000/v3/
 
 volume_backend_name=DEFAULT
 
@@ -78,9 +87,19 @@ verbose=True
 lock_path=/var/lock/cinder
 
 nova_catalog_admin_info = compute:nova:adminURL
-nova_catalog_info = compute:nova:{{ server.identity.get('endpoint_type', 'publicURL') }}
+nova_catalog_info = compute:nova:{{ controller.identity.get('endpoint_type', 'publicURL') }}
 
 osapi_volume_extension = cinder.api.contrib.standard_extensions
+
+{%- if controller.message_queue.members is defined %}
+transport_url = rabbit://{% for member in controller.message_queue.members -%}
+                             {{ controller.message_queue.user }}:{{ controller.message_queue.password }}@{{ controller.message_queue.host }}:{{ member.get('port', 5672) }}
+                             {%- if not loop.last -%},{%- endif -%}
+                             /{{ controller.message_queue.virtual_host }}
+                         {%- endfor -%}
+{%- else %}
+transport_url = rabbit://{{ controller.message_queue.user }}:{{ controller.message_queue.password }}@{{ controller.message_queue.host }}:{{ member.get('port', 5672) }}/{{ controller.message_queue.virtual_host }}
+{%- endif %}
 
 [oslo_messaging_notifications]
 {%- if controller.notification is mapping %}
@@ -96,21 +115,11 @@ driver = messagingv2
 
 lock_path=/var/lock/cinder
 
-[oslo_messaging_rabbit]
-{%- if controller.message_queue.members is defined %}
-rabbit_hosts = {% for member in controller.message_queue.members -%}
-                   {{ member.host }}:{{ member.get('port', 5672) }}
-                   {%- if not loop.last -%},{%- endif -%}
-               {%- endfor -%}
-{%- else %}
-rabbit_host = {{ controller.message_queue.host }}
-rabbit_port = {{ controller.message_queue.port }}
-{%- endif %}
+[oslo_middleware]
 
-rabbit_userid = {{ controller.message_queue.user }}
-rabbit_password = {{ controller.message_queue.password }}
-rabbit_virtual_host = {{ controller.message_queue.virtual_host }}
-kombu_reconnect_delay=5.0
+enable_proxy_headers_parsing = True
+
+[oslo_messaging_rabbit]
 
 [keystone_authtoken]
 signing_dir=/tmp/keystone-signing-cinder
@@ -130,13 +139,17 @@ auth_url=http://{{ controller.identity.host }}:35357
 {%- if controller.cache is defined %}
 memcached_servers={%- for member in controller.cache.members %}{{ member.host }}:11211{% if not loop.last %},{% endif %}{%- endfor %}
 {%- endif %}
+auth_version = v3
+
+[barbican]
+auth_endpoint=http://{{ controller.identity.host }}:5000
 
 [database]
 idle_timeout=3600
 max_pool_size=30
 max_retries=-1
 max_overflow=40
-connection = {{ controller.database.engine }}+pymysql://{{ controller.database.user }}:{{ controller.database.password }}@{{ controller.database.host }}/{{ controller.database.name }}
+connection = {{ controller.database.engine }}+pymysql://{{ controller.database.user }}:{{ controller.database.password }}@{{ controller.database.host }}/{{ controller.database.name }}?charset=utf8&read_timeout=60
 
 {%- if controller.backend is defined %}
 
