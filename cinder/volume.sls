@@ -72,7 +72,7 @@ cinder_iscsi_packages_{{ loop.index }}:
   - source: salt://cinder/files/iscsitarget
   - template: jinja
   - require:
-    - pkg: cinder_iscsi_packages
+    - pkg: cinder_iscsi_packages_{{ loop.index }}
 
 {%- if not grains.get('noservices', False) %}
 
