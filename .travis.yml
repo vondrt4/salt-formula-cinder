@@ -17,9 +17,16 @@ install:
   - bundle install
 
 env:
-    - PLATFORM=trevorj/salty-whales:trusty
-    - PLATFORM=trevorj/salty-whales:xenial
-
+    - SUITE=ceph_single
+    - SUITE=control_cluster
+    - SUITE=control_single
+    - SUITE=gpfs_single
+    - SUITE=hp3par_single
+    - SUITE=lefthand_single
+    - SUITE=solidfire_single
+    - SUITE=storwize_single
+    - SUITE=volume_single
+    - SUITE=vsp_single
 
 before_script:
   - set -o pipefail
