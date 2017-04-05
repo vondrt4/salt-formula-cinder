@@ -19,6 +19,7 @@ cinder:
       user: cinder
       password: password
       endpoint_type: internalURL
+      region: regionOne
     glance:
       host: 127.0.0.1
       port: 9292
@@ -29,3 +30,9 @@ cinder:
       user: openstack
       password: password
       virtual_host: '/openstack'
+    storage:
+      engine: storwize
+      host: 192.168.0.1
+      port: 22
+      user: username
+      password: pass
