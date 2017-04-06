@@ -87,12 +87,12 @@ nova_catalog_info = compute:nova:{{ volume.identity.get('endpoint_type', 'public
 
 {%- if volume.message_queue.members is defined %}
 transport_url = rabbit://{% for member in volume.message_queue.members -%}
-                             {{ volume.message_queue.user }}:{{ volume.message_queue.password }}@{{ volume.message_queue.host }}:{{ member.get('port', 5672) }}
+                             {{ volume.message_queue.user }}:{{ volume.message_queue.password }}@{{ member.host }}:{{ member.get('port', 5672) }}
                              {%- if not loop.last -%},{%- endif -%}
-                             /{{ volume.message_queue.virtual_host }}
                          {%- endfor -%}
+                             /{{ volume.message_queue.virtual_host }}
 {%- else %}
-transport_url = rabbit://{{ volume.message_queue.user }}:{{ volume.message_queue.password }}@{{ volume.message_queue.host }}:{{ member.get('port', 5672) }}/{{ volume.message_queue.virtual_host }}
+transport_url = rabbit://{{ volume.message_queue.user }}:{{ volume.message_queue.password }}@{{ volume.message_queue.host }}:{{ volume.message_queue.port }}/{{ volume.message_queue.virtual_host }}
 {%- endif %}
 
 [oslo_messaging_notifications]
@@ -143,7 +143,7 @@ idle_timeout=3600
 max_pool_size=30
 max_retries=-1
 max_overflow=40
-connection = {{ volume.database.engine }}+pymysql://{{ volume.database.user }}:{{ volume.database.password }}@{{ volume.database.host }}/{{ volume.database.name }}?charset=utf8&read_timeout=60
+connection = {{ volume.database.engine }}+pymysql://{{ volume.database.user }}:{{ volume.database.password }}@{{ volume.database.host }}/{{ volume.database.name }}?charset=utf8
 
 {%- if volume.backend is defined %}
 
