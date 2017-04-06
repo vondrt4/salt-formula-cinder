@@ -54,7 +54,7 @@ cinder_syncdb:
 {%- for backend_name, backend in controller.get('backend', {}).iteritems() %}
 
 {%- if backend.engine is defined and backend.engine == 'nfs' %}
-/etc/cinder/nfs_shares:
+/etc/cinder/nfs_shares_{{ backend_name }}:
   file.managed:
   - source: salt://cinder/files/{{ controller.version }}/nfs_shares
   - defaults:
