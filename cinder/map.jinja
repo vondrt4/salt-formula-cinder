@@ -2,7 +2,7 @@
 {% set controller = salt['grains.filter_by']({
     'Debian': {
         'pkgs': ['cinder-api', 'cinder-scheduler', 'lvm2', 'python-cinder', 'gettext-base', 'python-memcache', 'python-pycadf'],
-        'services': ['cinder-api', 'cinder-scheduler'],
+        'services': ['cinder-scheduler'],
         'wipe_method': 'none',
         'notification': False,
         'audit': {

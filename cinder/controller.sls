@@ -22,6 +22,41 @@ cinder_controller_packages:
   - require:
     - pkg: cinder_controller_packages
 
+{%- if controller.version == 'ocata' %}
+
+/etc/apache2/conf-available/cinder-wsgi.conf:
+  file.managed:
+  - source: salt://cinder/files/{{ controller.version }}/cinder-wsgi.conf
+  - template: jinja
+  - require:
+    - pkg: cinder_controller_packages
+
+{%- if not grains.get('noservices', False) %}
+cinder_api_service:
+  service.running:
+  - name: apache2
+  - enable: true
+  - watch:
+    - file: /etc/cinder/cinder.conf
+    - file: /etc/cinder/api-paste.ini
+    - file: /etc/apache2/conf-available/cinder-wsgi.conf
+{%- endif %}
+
+{%- else %}
+
+{%- if not grains.get('noservices', False) %}
+cinder_api_service:
+  service.running:
+  - name: cinder-api
+  - enable: true
+  - watch:
+    - file: /etc/cinder/cinder.conf
+    - file: /etc/cinder/api-paste.ini
+{%- endif %}
+
+{%- endif %}
+
+
 {%- if grains.get('virtual_subtype', None) == "Docker" %}
 
 cinder_entrypoint:
