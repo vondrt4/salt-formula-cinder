@@ -302,7 +302,7 @@ rbd_ceph_conf=/etc/ceph/ceph.conf
 # Flatten volumes created from snapshots to remove dependency
 # from volume to snapshot (boolean value)
 #rbd_flatten_volume_from_snapshot=false
-rbd_flatten_volume_from_snapshot={{ controller.storage.get('flatten_volume_from_snapshot', 'false') }}
+rbd_flatten_volume_from_snapshot={{ controller.storage.get('flatten_volume_from_snapshot', False)|lower }}
 
 # The libvirt uuid of the secret for the rbd_user volumes
 # (string value)
