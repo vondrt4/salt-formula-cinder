@@ -19,6 +19,7 @@ cinder-volume to role volume.
         enabled: true
         version: juno
         default_volume_type: 7k2SaS
+        availability_zone_fallback: True
         database:
           engine: mysql
           host: 127.0.0.1
