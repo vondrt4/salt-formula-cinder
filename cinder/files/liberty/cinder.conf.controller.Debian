@@ -24,6 +24,11 @@ auth_strategy = keystone
 state_path = /var/lib/cinder
 lock_path = /var/lock/cinder
 
+{%- if controller.query_volume_filters is defined %}
+# Available query filters for non-admin user
+query_volume_filters = {{ controller.query_volume_filters|join(",") }}
+{%- endif %}
+
 use_syslog=False
 
 glance_num_retries=0
@@ -86,7 +91,6 @@ notification_topics = {{ controller.notification.topics }}
 control_exchange = cinder
 notification_driver = messagingv2
 {%- endif %}
-
 
 volume_name_template = volume-%s
 
