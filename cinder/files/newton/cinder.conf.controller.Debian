@@ -86,6 +86,10 @@ use_syslog=false
 verbose=True
 lock_path=/var/lock/cinder
 
+{%- if controller.query_volume_filters is defined %}
+query_volume_filters = {{ controller.query_volume_filters|join(",") }}
+{%- endif %}
+
 nova_catalog_admin_info = compute:nova:adminURL
 nova_catalog_info = compute:nova:{{ controller.identity.get('endpoint_type', 'publicURL') }}
 

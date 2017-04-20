@@ -443,6 +443,21 @@ Cinder setup with custom availability zones:
         default_availability_zone: my-default-zone
         storage_availability_zone: my-custom-zone-name
 
+
+Cinder setup with custom non-admin volume query filters:
+
+.. code-block:: yaml
+
+    cinder:
+      controller:
+        query_volume_filters:
+          - name
+          - status
+          - metadata
+          - availability_zone
+          - bootable
+
+
 public_endpoint and osapi_volume_base_url parameters:
 "public_endpoint" is used for configuring versions endpoint,
 "osapi_volume_base_URL" is used to present Cinder URL to users.

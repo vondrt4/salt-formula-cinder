@@ -78,6 +78,10 @@ use_syslog=false
 verbose=True
 lock_path=/var/lock/cinder
 
+{%- if controller.query_volume_filters is defined %}
+query_volume_filters = {{ controller.query_volume_filters|join(",") }}
+{%- endif %}
+
 [oslo_messaging_notifications]
 {%- if controller.notification is mapping %}
 driver = {{ controller.notification.get('driver', 'messagingv2') }}
