@@ -75,6 +75,11 @@ log_dir=/var/log/cinder
 use_syslog=false
 verbose=True
 
+{%- if volume.backup.engine != None %}
+{%- set backup_backend_fragment = "cinder/files/backup_backend/_" + volume.backup.engine + ".conf" %}
+{%- include backup_backend_fragment %}
+{%- endif %}
+
 [oslo_messaging_notifications]
 {%- if volume.notification is mapping %}
 driver = {{ volume.notification.get('driver', 'messagingv2') }}

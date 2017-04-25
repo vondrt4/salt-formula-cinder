@@ -36,6 +36,22 @@ cinder_volume_packages:
   - require:
     - pkg: cinder_volume_packages
 
+{%- if volume.backup.engine != None %}
+
+cinder_backup_packages:
+  pkg.installed:
+  - names: {{ volume.backup.pkgs }}
+
+cinder_backup_services:
+  service.running:
+  - names: {{ volume.backup.services }}
+  - enable: true
+  - watch:
+    - file: /etc/cinder/cinder.conf
+    - file: /etc/cinder/api-paste.ini
+
+{%- endif %}
+
 {%- endif %}
 
 {%- if not grains.get('noservices', False) %}

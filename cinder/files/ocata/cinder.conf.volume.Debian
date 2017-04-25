@@ -95,6 +95,11 @@ transport_url = rabbit://{% for member in volume.message_queue.members -%}
 transport_url = rabbit://{{ volume.message_queue.user }}:{{ volume.message_queue.password }}@{{ volume.message_queue.host }}:{{ volume.message_queue.port }}/{{ volume.message_queue.virtual_host }}
 {%- endif %}
 
+{%- if volume.backup.engine != None %}
+{%- set backup_backend_fragment = "cinder/files/backup_backend/_" + volume.backup.engine + ".conf" %}
+{%- include backup_backend_fragment %}
+{%- endif %}
+
 [oslo_messaging_notifications]
 {%- if volume.notification is mapping %}
 driver = {{ volume.notification.get('driver', 'messagingv2') }}

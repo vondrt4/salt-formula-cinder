@@ -105,6 +105,11 @@ transport_url = rabbit://{% for member in controller.message_queue.members -%}
 transport_url = rabbit://{{ controller.message_queue.user }}:{{ controller.message_queue.password }}@{{ controller.message_queue.host }}:{{ controller.message_queue.port }}/{{ controller.message_queue.virtual_host }}
 {%- endif %}
 
+{%- if controller.backup.engine != None %}
+{%- set backup_backend_fragment = "cinder/files/backup_backend/_" + controller.backup.engine + ".conf" %}
+{%- include backup_backend_fragment %}
+{%- endif %}
+
 [oslo_messaging_notifications]
 {%- if controller.notification is mapping %}
 driver = {{ controller.notification.get('driver', 'messagingv2') }}

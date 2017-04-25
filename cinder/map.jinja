@@ -7,6 +7,11 @@
         'notification': False,
         'audit': {
           'enabled': false
+        },
+        'backup': {
+          'pkgs': ['cinder-backup'],
+          'services': ['cinder-backup'],
+          'engine': None
         }
     },
     'RedHat': {
@@ -16,7 +21,13 @@
         'notification': False,
         'audit': {
           'enabled': false
+        },
+        'backup': {
+          'pkgs': ['cinder-backup'],
+          'services': ['cinder-backup'],
+          'engine': None
         }
+
     },
 }, merge=pillar.cinder.get('controller', {})) %}
 
@@ -28,7 +39,13 @@
         'notification': False,
         'audit': {
           'enabled': false
+        },
+        'backup': {
+          'pkgs': ['cinder-backup'],
+          'services': ['cinder-backup'],
+          'engine': None
         }
+
     },
     'RedHat': {
         'pkgs': ['openstack-cinder', 'python-cinder', 'lvm2', 'sysfsutils', 'sg3_utils', 'device-mapper-multipath', 'device-mapper-multipath-libs', 'python-pycadf'],
@@ -37,6 +54,11 @@
         'notification': False,
         'audit': {
           'enabled': false
+        },
+        'backup': {
+          'pkgs': ['cinder-backup'],
+          'services': ['cinder-backup'],
+          'engine': None
         }
     },
 }, merge=pillar.cinder.get('volume', {})) %}

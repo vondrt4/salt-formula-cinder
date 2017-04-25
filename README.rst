@@ -96,6 +96,7 @@ cinder-volume to role volume.
             pool: SAS7K2
         audit:
           enabled: false
+    
 
 Client-side RabbitMQ HA setup for controller
 
@@ -408,8 +409,36 @@ Cinder setup with Solidfire
             clustername: cluster1
             sf_emulate_512: false
 
+Enable cinder-backup service for ceph
 
+.. code-block:: yaml
 
+    cinder:
+      controller:
+        enabled: true
+        version: mitaka
+        backup:
+          engine: ceph
+          ceph_conf: "/etc/ceph/ceph.conf"
+          ceph_pool: backup
+          ceph_stripe_count: 0
+          ceph_stripe_unit: 0
+          ceph_user: cinder
+          ceph_chunk_size: 134217728
+          restore_discard_excess_bytes: false
+      volume:
+        enabled: true
+        version: mitaka
+        backup:
+          engine: ceph
+          ceph_conf: "/etc/ceph/ceph.conf"
+          ceph_pool: backup
+          ceph_stripe_count: 0
+          ceph_stripe_unit: 0
+          ceph_user: cinder
+          ceph_chunk_size: 134217728
+          restore_discard_excess_bytes: false
+          
 Enable auditing filter, ie: CADF
 
 .. code-block:: yaml

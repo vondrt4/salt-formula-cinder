@@ -142,4 +142,20 @@ cinder_type_update_{{ type.name }}:
 
 {% endfor %}
 
+{%- if controller.backup.engine != None %}
+
+cinder_backup_packages:
+  pkg.installed:
+  - names: {{ controller.backup.pkgs }}
+
+cinder_backup_services:
+  service.running:
+  - names: {{ controller.backup.services }}
+  - enable: true
+  - watch:
+    - file: /etc/cinder/cinder.conf
+    - file: /etc/cinder/api-paste.ini
+
+{%- endif %}
+
 {%- endif %}
