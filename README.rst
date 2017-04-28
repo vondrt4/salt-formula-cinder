@@ -96,7 +96,21 @@ cinder-volume to role volume.
             pool: SAS7K2
         audit:
           enabled: false
-    
+
+
+Enable CORS parameters
+
+.. code-block:: yaml
+
+    cinder:
+      controller:
+        cors:
+          allowed_origin: https:localhost.local,http:localhost.local
+          expose_headers: X-Auth-Token,X-Openstack-Request-Id,X-Subject-Token
+          allow_methods: GET,PUT,POST,DELETE,PATCH
+          allow_headers: X-Auth-Token,X-Openstack-Request-Id,X-Subject-Token
+          allow_credentials: True
+          max_age: 86400
 
 Client-side RabbitMQ HA setup for controller
 
