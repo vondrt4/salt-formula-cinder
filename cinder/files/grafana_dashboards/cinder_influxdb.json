@@ -2569,13 +2569,7 @@
           "title": "Available Volumes",
           "type": "singlestat",
           "valueFontSize": "80%",
-          "valueMaps": [
-            {
-              "op": "=",
-              "text": "0",
-              "value": "null"
-            }
-          ],
+          "valueMaps": [],
           "valueName": "current"
         },
         {
@@ -2685,13 +2679,7 @@
           "title": "Volumes in use",
           "type": "singlestat",
           "valueFontSize": "80%",
-          "valueMaps": [
-            {
-              "op": "=",
-              "text": "0",
-              "value": "null"
-            }
-          ],
+          "valueMaps": [],
           "valueName": "current"
         },
         {
@@ -2800,13 +2788,7 @@
           "title": "Volumes in error",
           "type": "singlestat",
           "valueFontSize": "80%",
-          "valueMaps": [
-            {
-              "op": "=",
-              "text": "0",
-              "value": "null"
-            }
-          ],
+          "valueMaps": [],
           "valueName": "current"
         },
         {
@@ -2856,7 +2838,7 @@
                 },
                 {
                   "params": [
-                    "0"
+                    "null"
                   ],
                   "type": "fill"
                 }
@@ -2864,7 +2846,7 @@
               "hide": false,
               "measurement": "openstack_cinder_volumes",
               "policy": "default",
-              "query": "SELECT max(\"value\") FROM \"openstack_cinder_volumes\" WHERE \"environment_label\" =~ /^$environment$/ AND \"state\" = 'available' AND $timeFilter GROUP BY time($interval) fill(0)",
+              "query": "SELECT max(\"value\") FROM \"openstack_cinder_volumes\" WHERE \"environment_label\" =~ /^$environment$/ AND \"state\" = 'available' AND $timeFilter GROUP BY time($interval) fill(null)",
               "rawQuery": false,
               "refId": "A",
               "resultFormat": "time_series",
@@ -2908,14 +2890,14 @@
                 },
                 {
                   "params": [
-                    "0"
+                    "null"
                   ],
                   "type": "fill"
                 }
               ],
               "measurement": "openstack_cinder_volumes",
               "policy": "default",
-              "query": "SELECT max(\"value\") FROM \"openstack_cinder_volumes\" WHERE \"environment_label\" =~ /^$environment$/ AND \"state\" = 'in-use' AND $timeFilter GROUP BY time($interval) fill(0)",
+              "query": "SELECT max(\"value\") FROM \"openstack_cinder_volumes\" WHERE \"environment_label\" =~ /^$environment$/ AND \"state\" = 'in-use' AND $timeFilter GROUP BY time($interval) fill(null)",
               "rawQuery": false,
               "refId": "B",
               "resultFormat": "time_series",
@@ -2960,7 +2942,7 @@
                 },
                 {
                   "params": [
-                    "0"
+                    "null"
                   ],
                   "type": "fill"
                 }
@@ -2968,7 +2950,7 @@
               "hide": false,
               "measurement": "openstack_cinder_volumes",
               "policy": "default",
-              "query": "SELECT max(\"value\") FROM \"openstack_cinder_volumes\" WHERE \"environment_label\" =~ /^$environment$/ AND \"state\" = 'error' AND $timeFilter GROUP BY time($interval) fill(0)",
+              "query": "SELECT max(\"value\") FROM \"openstack_cinder_volumes\" WHERE \"environment_label\" =~ /^$environment$/ AND \"state\" = 'error' AND $timeFilter GROUP BY time($interval) fill(null)",
               "rawQuery": false,
               "refId": "C",
               "resultFormat": "time_series",
@@ -3139,13 +3121,7 @@
           "title": "",
           "type": "singlestat",
           "valueFontSize": "80%",
-          "valueMaps": [
-            {
-              "op": "=",
-              "text": "0 GiB",
-              "value": "null"
-            }
-          ],
+          "valueMaps": [],
           "valueName": "current"
         },
         {
@@ -3254,13 +3230,7 @@
           "title": "",
           "type": "singlestat",
           "valueFontSize": "80%",
-          "valueMaps": [
-            {
-              "op": "=",
-              "text": "0 GiB",
-              "value": "null"
-            }
-          ],
+          "valueMaps": [],
           "valueName": "current"
         },
         {
@@ -3369,13 +3339,7 @@
           "title": "",
           "type": "singlestat",
           "valueFontSize": "80%",
-          "valueMaps": [
-            {
-              "op": "=",
-              "text": "0 GiB",
-              "value": "null"
-            }
-          ],
+          "valueMaps": [],
           "valueName": "current"
         },
         {
@@ -3424,14 +3388,14 @@
                 },
                 {
                   "params": [
-                    "0"
+                    "null"
                   ],
                   "type": "fill"
                 }
               ],
               "measurement": "openstack_cinder_volumes_size",
               "policy": "default",
-              "query": "SELECT max(\"value\") FROM \"openstack_cinder_volumes_size\" WHERE \"environment_label\" =~ /^$environment$/ AND \"state\" = 'available' AND $timeFilter GROUP BY time($interval) fill(0)",
+              "query": "SELECT max(\"value\") FROM \"openstack_cinder_volumes_size\" WHERE \"environment_label\" =~ /^$environment$/ AND \"state\" = 'available' AND $timeFilter GROUP BY time($interval) fill(null)",
               "rawQuery": false,
               "refId": "A",
               "resultFormat": "time_series",
@@ -3476,14 +3440,14 @@
                 },
                 {
                   "params": [
-                    "0"
+                    "null"
                   ],
                   "type": "fill"
                 }
               ],
               "measurement": "openstack_cinder_volumes_size",
               "policy": "default",
-              "query": "SELECT max(\"value\") FROM \"openstack_cinder_volumes_size\" WHERE \"environment_label\" =~ /^$environment$/ AND \"state\" = 'in-use' AND $timeFilter GROUP BY time($interval) fill(0)",
+              "query": "SELECT max(\"value\") FROM \"openstack_cinder_volumes_size\" WHERE \"environment_label\" =~ /^$environment$/ AND \"state\" = 'in-use' AND $timeFilter GROUP BY time($interval) fill(null)",
               "rawQuery": false,
               "refId": "B",
               "resultFormat": "time_series",
@@ -3528,14 +3492,14 @@
                 },
                 {
                   "params": [
-                    "0"
+                    "null"
                   ],
                   "type": "fill"
                 }
               ],
               "measurement": "openstack_cinder_volumes_size",
               "policy": "default",
-              "query": "SELECT max(\"value\") FROM \"openstack_cinder_volumes_size\" WHERE \"environment_label\" =~ /^$environment$/ AND \"state\" = 'error' AND $timeFilter GROUP BY time($interval) fill(0)",
+              "query": "SELECT max(\"value\") FROM \"openstack_cinder_volumes_size\" WHERE \"environment_label\" =~ /^$environment$/ AND \"state\" = 'error' AND $timeFilter GROUP BY time($interval) fill(null)",
               "rawQuery": false,
               "refId": "C",
               "resultFormat": "time_series",
@@ -3972,7 +3936,7 @@
             "thresholdLabels": false,
             "thresholdMarkers": true
           },
-          "id": 12,
+          "id": 112,
           "interval": "> 60s",
           "links": [],
           "mappingType": 1,
@@ -4057,13 +4021,7 @@
           "title": "Available Snapshots",
           "type": "singlestat",
           "valueFontSize": "80%",
-          "valueMaps": [
-            {
-              "op": "=",
-              "text": "0",
-              "value": "null"
-            }
-          ],
+          "valueMaps": [],
           "valueName": "current"
         },
         {
@@ -4086,7 +4044,7 @@
             "thresholdLabels": false,
             "thresholdMarkers": true
           },
-          "id": 21,
+          "id": 121,
           "interval": "> 60s",
           "links": [],
           "mappingType": 1,
@@ -4137,7 +4095,7 @@
               ],
               "measurement": "openstack_cinder_snapshots",
               "policy": "default",
-              "query": "SELECT last(\"value\") FROM \"openstack_cinder_snapshots\" WHERE \"environment_label\" =~ /^$environment$/ AND \"state\" = 'in-use' AND $timeFilter GROUP BY time($interval)",
+              "query": "SELECT last(\"value\") FROM \"openstack_cinder_snapshots\" WHERE \"environment_label\" =~ /^$environment$/ AND \"state\" = 'creating' AND $timeFilter GROUP BY time($interval)",
               "rawQuery": false,
               "refId": "A",
               "resultFormat": "time_series",
@@ -4163,22 +4121,16 @@
                 },
                 {
                   "key": "state",
-                  "value": "in-use"
+                  "value": "creating"
                 }
               ]
             }
           ],
           "thresholds": "",
-          "title": "Snapshots in use",
+          "title": "Snapshots in creation",
           "type": "singlestat",
           "valueFontSize": "80%",
-          "valueMaps": [
-            {
-              "op": "=",
-              "text": "0",
-              "value": "null"
-            }
-          ],
+          "valueMaps": [],
           "valueName": "current"
         },
         {
@@ -4201,7 +4153,7 @@
             "thresholdLabels": false,
             "thresholdMarkers": true
           },
-          "id": 16,
+          "id": 116,
           "interval": "> 60s",
           "links": [],
           "mappingType": 1,
@@ -4287,13 +4239,7 @@
           "title": "Snapshots in error",
           "type": "singlestat",
           "valueFontSize": "80%",
-          "valueMaps": [
-            {
-              "op": "=",
-              "text": "0",
-              "value": "null"
-            }
-          ],
+          "valueMaps": [],
           "valueName": "current"
         },
         {
@@ -4305,7 +4251,7 @@
           "error": false,
           "fill": 0,
           "grid": {},
-          "id": 54,
+          "id": 154,
           "interval": ">60s",
           "legend": {
             "avg": false,
@@ -4343,7 +4289,7 @@
                 },
                 {
                   "params": [
-                    "0"
+                    "null"
                   ],
                   "type": "fill"
                 }
@@ -4351,7 +4297,7 @@
               "hide": false,
               "measurement": "openstack_cinder_snapshots",
               "policy": "default",
-              "query": "SELECT max(\"value\") FROM \"openstack_cinder_snapshots\" WHERE \"environment_label\" =~ /^$environment$/ AND \"state\" = 'available' AND $timeFilter GROUP BY time($interval) fill(0)",
+              "query": "SELECT max(\"value\") FROM \"openstack_cinder_snapshots\" WHERE \"environment_label\" =~ /^$environment$/ AND \"state\" = 'available' AND $timeFilter GROUP BY time($interval) fill(null)",
               "rawQuery": false,
               "refId": "A",
               "resultFormat": "time_series",
@@ -4382,7 +4328,7 @@
               ]
             },
             {
-              "alias": "in-use",
+              "alias": "creating",
               "column": "value",
               "dsType": "influxdb",
               "function": "max",
@@ -4395,14 +4341,14 @@
                 },
                 {
                   "params": [
-                    "0"
+                    "null"
                   ],
                   "type": "fill"
                 }
               ],
               "measurement": "openstack_cinder_snapshots",
               "policy": "default",
-              "query": "SELECT max(\"value\") FROM \"openstack_cinder_snapshots\" WHERE \"environment_label\" =~ /^$environment$/ AND \"state\" = 'in-use' AND $timeFilter GROUP BY time($interval) fill(0)",
+              "query": "SELECT max(\"value\") FROM \"openstack_cinder_snapshots\" WHERE \"environment_label\" =~ /^$environment$/ AND \"state\" = 'creating' AND $timeFilter GROUP BY time($interval) fill(null)",
               "rawQuery": false,
               "refId": "B",
               "resultFormat": "time_series",
@@ -4428,7 +4374,7 @@
                 },
                 {
                   "key": "state",
-                  "value": "in-use"
+                  "value": "creating"
                 }
               ],
               "target": ""
@@ -4447,7 +4393,7 @@
                 },
                 {
                   "params": [
-                    "0"
+                    "null"
                   ],
                   "type": "fill"
                 }
@@ -4455,7 +4401,7 @@
               "hide": false,
               "measurement": "openstack_cinder_snapshots",
               "policy": "default",
-              "query": "SELECT max(\"value\") FROM \"openstack_cinder_snapshots\" WHERE \"environment_label\" =~ /^$environment$/ AND \"state\" = 'error' AND $timeFilter GROUP BY time($interval) fill(0)",
+              "query": "SELECT max(\"value\") FROM \"openstack_cinder_snapshots\" WHERE \"environment_label\" =~ /^$environment$/ AND \"state\" = 'error' AND $timeFilter GROUP BY time($interval) fill(null)",
               "rawQuery": false,
               "refId": "C",
               "resultFormat": "time_series",
@@ -4541,7 +4487,7 @@
             "thresholdLabels": false,
             "thresholdMarkers": true
           },
-          "id": 23,
+          "id": 123,
           "interval": "> 60s",
           "links": [],
           "mappingType": 1,
@@ -4626,13 +4572,7 @@
           "title": "",
           "type": "singlestat",
           "valueFontSize": "80%",
-          "valueMaps": [
-            {
-              "op": "=",
-              "text": "0 GiB",
-              "value": "null"
-            }
-          ],
+          "valueMaps": [],
           "valueName": "current"
         },
         {
@@ -4655,7 +4595,7 @@
             "thresholdLabels": false,
             "thresholdMarkers": true
           },
-          "id": 24,
+          "id": 124,
           "interval": "> 60s",
           "links": [],
           "mappingType": 1,
@@ -4706,7 +4646,7 @@
               ],
               "measurement": "openstack_cinder_snapshots_size",
               "policy": "default",
-              "query": "SELECT last(\"value\") FROM \"openstack_cinder_snapshots_size\" WHERE \"environment_label\" =~ /^$environment$/ AND \"state\" = 'in-use' AND $timeFilter GROUP BY time($interval)",
+              "query": "SELECT last(\"value\") FROM \"openstack_cinder_snapshots_size\" WHERE \"environment_label\" =~ /^$environment$/ AND \"state\" = 'creating' AND $timeFilter GROUP BY time($interval)",
               "rawQuery": false,
               "refId": "A",
               "resultFormat": "time_series",
@@ -4732,7 +4672,7 @@
                 },
                 {
                   "key": "state",
-                  "value": "in-use"
+                  "value": "creating"
                 }
               ]
             }
@@ -4741,13 +4681,7 @@
           "title": "",
           "type": "singlestat",
           "valueFontSize": "80%",
-          "valueMaps": [
-            {
-              "op": "=",
-              "text": "0 GiB",
-              "value": "null"
-            }
-          ],
+          "valueMaps": [],
           "valueName": "current"
         },
         {
@@ -4770,7 +4704,7 @@
             "thresholdLabels": false,
             "thresholdMarkers": true
           },
-          "id": 25,
+          "id": 125,
           "interval": "> 60s",
           "links": [],
           "mappingType": 1,
@@ -4856,13 +4790,7 @@
           "title": "",
           "type": "singlestat",
           "valueFontSize": "80%",
-          "valueMaps": [
-            {
-              "op": "=",
-              "text": "0 GiB",
-              "value": "null"
-            }
-          ],
+          "valueMaps": [],
           "valueName": "current"
         },
         {
@@ -4873,7 +4801,7 @@
           "error": false,
           "fill": 0,
           "grid": {},
-          "id": 55,
+          "id": 155,
           "interval": ">60s",
           "legend": {
             "avg": false,
@@ -4911,14 +4839,14 @@
                 },
                 {
                   "params": [
-                    "0"
+                    "null"
                   ],
                   "type": "fill"
                 }
               ],
               "measurement": "openstack_cinder_snapshots_size",
               "policy": "default",
-              "query": "SELECT max(\"value\") FROM \"openstack_cinder_snapshots_size\" WHERE \"environment_label\" =~ /^$environment$/ AND \"state\" = 'available' AND $timeFilter GROUP BY time($interval) fill(0)",
+              "query": "SELECT max(\"value\") FROM \"openstack_cinder_snapshots_size\" WHERE \"environment_label\" =~ /^$environment$/ AND \"state\" = 'available' AND $timeFilter GROUP BY time($interval) fill(null)",
               "rawQuery": false,
               "refId": "A",
               "resultFormat": "time_series",
@@ -4949,7 +4877,7 @@
               ]
             },
             {
-              "alias": "in-use",
+              "alias": "creating",
               "column": "value",
               "dsType": "influxdb",
               "function": "max",
@@ -4962,14 +4890,14 @@
                 },
                 {
                   "params": [
-                    "0"
+                    "null"
                   ],
                   "type": "fill"
                 }
               ],
               "measurement": "openstack_cinder_snapshots_size",
               "policy": "default",
-              "query": "SELECT max(\"value\") FROM \"openstack_cinder_snapshots_size\" WHERE \"environment_label\" =~ /^$environment$/ AND \"state\" = 'in-use' AND $timeFilter GROUP BY time($interval) fill(0)",
+              "query": "SELECT max(\"value\") FROM \"openstack_cinder_snapshots_size\" WHERE \"environment_label\" =~ /^$environment$/ AND \"state\" = 'creating' AND $timeFilter GROUP BY time($interval) fill(null)",
               "rawQuery": false,
               "refId": "B",
               "resultFormat": "time_series",
@@ -4995,7 +4923,7 @@
                 },
                 {
                   "key": "state",
-                  "value": "in-use"
+                  "value": "creating"
                 }
               ]
             },
@@ -5013,14 +4941,14 @@
                 },
                 {
                   "params": [
-                    "0"
+                    "null"
                   ],
                   "type": "fill"
                 }
               ],
               "measurement": "openstack_cinder_snapshots_size",
               "policy": "default",
-              "query": "SELECT max(\"value\") FROM \"openstack_cinder_snapshots_size\" WHERE \"environment_label\" =~ /^$environment$/ AND \"state\" = 'error' AND $timeFilter GROUP BY time($interval) fill(0)",
+              "query": "SELECT max(\"value\") FROM \"openstack_cinder_snapshots_size\" WHERE \"environment_label\" =~ /^$environment$/ AND \"state\" = 'error' AND $timeFilter GROUP BY time($interval) fill(null)",
               "rawQuery": false,
               "refId": "C",
               "resultFormat": "time_series",
@@ -5184,5 +5112,5 @@
   },
   "timezone": "browser",
   "title": "Cinder",
-  "version": 7
+  "version": 8
 }
