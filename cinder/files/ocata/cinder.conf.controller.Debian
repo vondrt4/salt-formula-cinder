@@ -170,3 +170,50 @@ connection = {{ controller.database.engine }}+pymysql://{{ controller.database.u
 {%- endfor %}
 
 {%- endif %}
+
+[cors]
+
+#
+# From oslo.middleware.cors
+#
+
+# Indicate whether this resource may be shared with the domain
+# received in the requests "origin" header. (list value)
+#allowed_origin = <None>
+{%- if controller.cors.allowed_origin is defined %}
+allowed_origin = {{ controller.cors.allowed_origin }}
+{%- endif %}
+
+# Indicate that the actual request can include user credentials
+# (boolean value)
+#allow_credentials = true
+{%- if controller.cors.allow_credentials is defined %}
+allow_credentials = {{ controller.cors.allow_credentials }}
+{%- endif %}
+
+# Indicate which headers are safe to expose to the API. Defaults to
+# HTTP Simple Headers. (list value)
+#expose_headers = X-Image-Meta-Checksum,X-Auth-Token,X-Subject-Token,X-Service-Token,X-OpenStack-Request-ID
+{%- if controller.cors.expose_headers is defined %}
+expose_headers = {{ controller.cors.expose_headers }}
+{%- endif %}
+
+# Maximum cache age of CORS preflight requests. (integer value)
+#max_age = 3600
+{%- if controller.cors.max_age is defined %}
+max_age = {{ controller.cors.max_age }}
+{%- endif %}
+
+# Indicate which methods can be used during the actual request. (list
+# value)
+#allow_methods = GET,PUT,POST,DELETE,PATCH
+{%- if controller.cors.allow_methods is defined %}
+allow_methods = {{ controller.cors.allow_methods }}
+{%- endif %}
+
+# Indicate which header field names may be used during the actual
+# request. (list value)
+#allow_headers = Content-MD5,X-Image-Meta-Checksum,X-Storage-Token,Accept-Encoding,X-Auth-Token,X-Identity-Status,X-Roles,X-Service-Catalog,X-User-Id,X-Tenant-Id,X-OpenStack-Request-ID
+{%- if controller.cors.allow_headers is defined %}
+allow_headers = {{ controller.cors.allow_headers }}
+{%- endif %}
