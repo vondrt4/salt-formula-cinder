@@ -22,6 +22,30 @@ cinder_controller_packages:
   - require:
     - pkg: cinder_controller_packages
 
+{%- for name, rule in controller.get('policy', {}).iteritems() %}
+
+{%- if rule != None %}
+rule_{{ name }}_present:
+  keystone_policy.rule_present:
+  - path: /etc/cinder/policy.json
+  - name: {{ name }}
+  - rule: {{ rule }}
+  - require:
+    - pkg: cinder_controller_packages
+
+{%- else %}
+
+rule_{{ name }}_absent:
+  keystone_policy.rule_absent:
+  - path: /etc/cinder/policy.json
+  - name: {{ name }}
+  - require:
+    - pkg: cinder_controller_packages
+
+{%- endif %}
+
+{%- endfor %}
+
 {%- if controller.version == 'ocata' %}
 
 /etc/apache2/conf-available/cinder-wsgi.conf:
