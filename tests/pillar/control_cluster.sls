@@ -51,3 +51,6 @@ cinder:
     audit:
       filter_factory: 'keystonemiddleware.audit:filter_factory'
       map_file: '/etc/pycadf/cinder_api_audit_map.conf'
+    policy:
+      'volume:delete': 'rule:admin_or_owner'
+      'volume:extend':

@@ -36,3 +36,6 @@ cinder:
         port: 22
         user: username
         password: pass
+    policy:
+      'volume:delete': 'rule:admin_or_owner'
+      'volume:extend':

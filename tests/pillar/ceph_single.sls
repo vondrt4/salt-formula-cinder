@@ -40,6 +40,9 @@ cinder:
       name: cinder
       user: cinder
       password: pwd
+    policy:
+      'volume:delete': 'rule:admin_or_owner'
+      'volume:extend':
   volume:
     enabled: true
     version: liberty

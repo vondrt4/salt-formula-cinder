@@ -169,6 +169,18 @@ Cinder setup with shreding deleted volumes
         wipe_method: shred
         ...
 
+Configuration of policy.json file
+
+.. code-block:: yaml
+
+    cinder:
+      controller:
+        ....
+        policy:
+          'volume:delete': 'rule:admin_or_owner'
+          # Add key without value to remove line from policy.json
+          'volume:extend':
+
 
 Default Cinder setup with iSCSI target
 
