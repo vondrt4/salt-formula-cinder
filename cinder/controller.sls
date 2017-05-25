@@ -119,7 +119,7 @@ cinder_syncdb:
 
 {%- for backend_name, backend in controller.get('backend', {}).iteritems() %}
 
-{%- if backend.engine is defined and backend.engine == 'nfs' %}
+{%- if backend.engine is defined and backend.engine == 'nfs' or (backend.engine == 'netapp' and backend.storage_protocol == 'nfs') %}
 /etc/cinder/nfs_shares_{{ backend_name }}:
   file.managed:
   - source: salt://cinder/files/{{ controller.version }}/nfs_shares
@@ -128,6 +128,20 @@ cinder_syncdb:
   - template: jinja
   - require:
     - pkg: cinder_controller_packages
+
+cinder_netapp_packages:
+  pkg.installed:
+    - pkgs:
+      - nfs-common
+
+{%- endif %}
+
+{%- if backend.get('use_multipath_for_image_xfer', False) %}
+
+cinder_netapp_add_packages:
+  pkg.installed:
+    - pkgs:
+      - multipath-tools
 
 {%- endif %}
 

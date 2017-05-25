@@ -1,0 +1,8 @@
+applications:
+- cinder
+classes:
+- service.cinder.support
+parameters:
+  cinder:
+    compute:
+      enabled: true
