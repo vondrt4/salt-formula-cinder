@@ -15,10 +15,8 @@ cinder_volume_packages:
   - group: cinder
   - require:
     - pkg: cinder_volume_packages
-  {%- if not grains.get('noservices', False) %}
   - require_in:
     - service: cinder_volume_services
-  {%- endif %}
 
 {%- if not pillar.cinder.get('controller', {}).get('enabled', False) %}
 
@@ -46,6 +44,9 @@ cinder_backup_services:
   service.running:
   - names: {{ volume.backup.services }}
   - enable: true
+  {% if grains.noservices is defined %}
+  - onlyif: {% if grains.get('noservices', "True") %}"True"{% else %}False{% endif %}
+  {% endif %}
   - watch:
     - file: /etc/cinder/cinder.conf
     - file: /etc/cinder/api-paste.ini
@@ -53,18 +54,17 @@ cinder_backup_services:
 {%- endif %}
 
 {%- endif %}
-
-{%- if not grains.get('noservices', False) %}
 
 cinder_volume_services:
   service.running:
   - names: {{ volume.services }}
   - enable: true
+  {% if grains.noservices is defined %}
+  - onlyif: {% if grains.get('noservices', "True") %}"True"{% else %}False{% endif %}
+  {% endif %}
   - watch:
     - file: /etc/cinder/cinder.conf
     - file: /etc/cinder/api-paste.ini
-
-{%- endif %}
 
 {# new way #}
 
@@ -90,19 +90,17 @@ cinder_iscsi_packages_{{ loop.index }}:
   - require:
     - pkg: cinder_iscsi_packages_{{ loop.index }}
 
-{%- if not grains.get('noservices', False) %}
-
 cinder_scsi_service:
   service.running:
   - names:
     - iscsitarget
     - open-iscsi
   - enable: true
+  {% if grains.noservices is defined %}
+  - onlyif: {% if grains.get('noservices', "True") %}"True"{% else %}False{% endif %}
+  {% endif %}
   - watch:
     - file: /etc/default/iscsitarget
-
-{%- endif %}
-
 
 {%- endif %}
 
@@ -178,18 +176,17 @@ cinder_iscsi_packages:
   - require:
     - pkg: cinder_iscsi_packages
 
-{%- if not grains.get('noservices', False) %}
-
 cinder_scsi_service:
   service.running:
   - names:
     - iscsitarget
     - open-iscsi
   - enable: true
+  {% if grains.noservices is defined %}
+  - onlyif: {% if grains.get('noservices', "True") %}"True"{% else %}False{% endif %}
+  {% endif %}
   - watch:
     - file: /etc/default/iscsitarget
-
-{%- endif %}
 
 {%- endif %}
 
