@@ -55,28 +55,30 @@ rule_{{ name }}_absent:
   - require:
     - pkg: cinder_controller_packages
 
-{%- if not grains.get('noservices', False) %}
 cinder_api_service:
   service.running:
   - name: apache2
   - enable: true
+  {% if grains.noservices is defined %}
+  - onlyif: {% if grains.get('noservices', "True") %}"True"{% else %}False{% endif %}
+  {% endif %}
   - watch:
     - file: /etc/cinder/cinder.conf
     - file: /etc/cinder/api-paste.ini
     - file: /etc/apache2/conf-available/cinder-wsgi.conf
-{%- endif %}
 
 {%- else %}
 
-{%- if not grains.get('noservices', False) %}
 cinder_api_service:
   service.running:
   - name: cinder-api
   - enable: true
+  {% if grains.noservices is defined %}
+  - onlyif: {% if grains.get('noservices', "True") %}"True"{% else %}False{% endif %}
+  {% endif %}
   - watch:
     - file: /etc/cinder/cinder.conf
     - file: /etc/cinder/api-paste.ini
-{%- endif %}
 
 {%- endif %}
 
@@ -92,12 +94,13 @@ cinder_entrypoint:
 
 {%- endif %}
 
-{%- if not grains.get('noservices', False) %}
-
 cinder_controller_services:
   service.running:
   - names: {{ controller.services }}
   - enable: true
+  {% if grains.noservices is defined %}
+  - onlyif: {% if grains.get('noservices', "True") %}"True"{% else %}False{% endif %}
+  {% endif %}
   - watch:
     - file: /etc/cinder/cinder.conf
     - file: /etc/cinder/api-paste.ini
@@ -105,10 +108,14 @@ cinder_controller_services:
 cinder_syncdb:
   cmd.run:
   - name: cinder-manage db sync
+  {% if grains.noservices is defined %}
+  - onlyif: {% if grains.get('noservices', "True") %}"True"{% else %}False{% endif %}
+  {% endif %}
   - require:
     - service: cinder_controller_services
 
 {# new way #}
+{%- if not grains.get('noservices', False) %}
 
 {%- for backend_name, backend in controller.get('backend', {}).iteritems() %}
 
