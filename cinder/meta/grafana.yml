@@ -1,5 +1,10 @@
 dashboard:
-  cinder:
+  cinder_prometheus:
+    datasource: prometheus
+    format: json
+    template: cinder/files/grafana_dashboards/cinder_prometheus.json
+  cinder_influxdb:
+    datasource: influxdb
     format: json
     template: cinder/files/grafana_dashboards/cinder_influxdb.json
   service_level:
