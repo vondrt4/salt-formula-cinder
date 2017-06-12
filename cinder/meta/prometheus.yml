@@ -1,0 +1,15 @@
+{% raw %}
+server:
+  alert:
+    CinderAPIDown:
+      if: >-
+        max(openstack_api_check_status{service=~"cinder.+"}) by (service) == 0
+      for: 2m
+      labels:
+        severity: down
+        service: "{{ $labels.service }}"
+      annotations:
+        summary: "Endpoint check for '{{ $labels.service }}' is down"
+        description: >-
+            Endpoint check for '{{ $labels.service }}' is down for 2 minutes
+{% endraw %}
