@@ -44,9 +44,9 @@ cinder_backup_services:
   service.running:
   - names: {{ volume.backup.services }}
   - enable: true
-  {% if grains.noservices is defined %}
-  - onlyif: {% if grains.get('noservices', "True") %}"True"{% else %}False{% endif %}
-  {% endif %}
+  {%- if grains.get('noservices') %}
+  - onlyif: /bin/false
+  {%- endif %}
   - watch:
     - file: /etc/cinder/cinder.conf
     - file: /etc/cinder/api-paste.ini
@@ -59,9 +59,9 @@ cinder_volume_services:
   service.running:
   - names: {{ volume.services }}
   - enable: true
-  {% if grains.noservices is defined %}
-  - onlyif: {% if grains.get('noservices', "True") %}"True"{% else %}False{% endif %}
-  {% endif %}
+  {%- if grains.get('noservices') %}
+  - onlyif: /bin/false
+  {%- endif %}
   - watch:
     - file: /etc/cinder/cinder.conf
     - file: /etc/cinder/api-paste.ini
@@ -96,9 +96,9 @@ cinder_scsi_service:
     - iscsitarget
     - open-iscsi
   - enable: true
-  {% if grains.noservices is defined %}
-  - onlyif: {% if grains.get('noservices', "True") %}"True"{% else %}False{% endif %}
-  {% endif %}
+  {%- if grains.get('noservices') %}
+  - onlyif: /bin/false
+  {%- endif %}
   - watch:
     - file: /etc/default/iscsitarget
 
@@ -182,9 +182,9 @@ cinder_scsi_service:
     - iscsitarget
     - open-iscsi
   - enable: true
-  {% if grains.noservices is defined %}
-  - onlyif: {% if grains.get('noservices', "True") %}"True"{% else %}False{% endif %}
-  {% endif %}
+  {%- if grains.get('noservices') %}
+  - onlyif: /bin/false
+  {%- endif %}
   - watch:
     - file: /etc/default/iscsitarget
 
