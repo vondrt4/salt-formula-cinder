@@ -65,36 +65,3 @@
     },
 }, merge=pillar.cinder.get('volume', {})) %}
 
-{% set compute = salt['grains.filter_by']({
-    'Debian': {
-        'pkgs': [],
-        'services': [],
-        'wipe_method': 'none',
-        'notification': False,
-        'cors': {},
-        'audit': {
-          'enabled': false
-        },
-        'backup': {
-          'pkgs': [],
-          'services': [],
-          'engine': None
-        }
-    },
-    'RedHat': {
-        'pkgs': [],
-        'services': [],
-        'wipe_method': 'none',
-        'notification': False,
-        'cors': {},
-        'audit': {
-          'enabled': false
-        },
-        'backup': {
-          'pkgs': [],
-          'services': [],
-          'engine': None
-        }
-
-    },
-}, merge=pillar.cinder.get('compute', {})) %}

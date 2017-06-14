@@ -303,11 +303,11 @@ Cinder setup with NetApp
               - 172.18.1.2:/vol_2
               - 172.18.1.2:/vol_3
               - 172.18.1.2:/vol_4
-      compute:
-        backend:
-          netapp:
-            engine: netapp
-            storage_protocol: nfs
+    linux:
+      system:
+        package:
+          nfs-common:
+            version: latest
 
 
 Cinder setup with Hitachi VPS

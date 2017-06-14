@@ -22,10 +22,8 @@ cinder:
   volume:
     enabled: true
     version: mitaka
-  compute:
-    enabled: true
-    version: mitaka
-    backend:
-      netapp:
-        engine: netapp
-        storage_protocol: nfs
+linux:
+  system:
+    package:
+      nfs-common:
+        version: latest
