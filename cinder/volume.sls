@@ -72,8 +72,8 @@ cinder_volume_services:
 
 {%- for backend_name, backend in volume.get('backend', {}).iteritems() %}
 
-{%- if backend.engine is defined and backend.engine == 'nfs' or (backend.engine == 'netapp' and backend.storage_protocol == 'nfs') %}
-/etc/cinder/nfs_shares_{{ backend_name }}_for_cinder-volume:
+{%- if backend.get('engine') == 'nfs' or (backend.get('engine') == 'netapp' and backend.get('storage_protocol') == 'nfs') %}
+/etc/cinder/nfs_shares_{{ backend_name }}_for_cinder_volume:
   file.managed:
   - name: /etc/cinder/nfs_shares_{{ backend_name }}
   - source: salt://cinder/files/{{ volume.version }}/nfs_shares
@@ -83,7 +83,7 @@ cinder_volume_services:
   - require:
     - pkg: cinder_volume_packages
 
-cinder_netapp_packages_for_cinder-volume:
+cinder_netapp_packages_for_cinder_volume:
   pkg.installed:
     - pkgs:
       - nfs-common
