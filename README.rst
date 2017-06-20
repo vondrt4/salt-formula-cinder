@@ -355,6 +355,7 @@ Cinder setup with CEPH
             user: cinder
             secret_uuid: da74ccb7-aa59-1721-a172-0006b1aa4e3e
             client_cinder_key: AQDOavlU6BsSJhAAnpFR906mvdgdfRqLHwu0Uw==
+            report_discard_supported: True
 
 http://ceph.com/docs/master/rbd/rbd-openstack/
 
