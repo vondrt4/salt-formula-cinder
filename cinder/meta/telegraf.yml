@@ -1,0 +1,8 @@
+{%- from "cinder/map.jinja" import controller with context %}
+{%- if controller.get('enabled', False) %}
+agent:
+  input:
+    http_response:
+      cinder-api:
+        address: "http://{{ controller.osapi.host|replace('0.0.0.0', '127.0.0.1') }}:8776/"
+{%- endif %}
