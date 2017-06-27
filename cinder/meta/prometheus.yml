@@ -1,6 +1,13 @@
-{% raw %}
+{%- from "cinder/map.jinja" import controller as controller with context %}
+{%- from "cinder/map.jinja" import volume as volume with context %}
+{%- set is_controller = controller.get('enabled', False) %}
+{%- set is_volume = volume.get('enabled', False) %}
+
+{%- if is_controller or is_volume %}
 server:
   alert:
+{%- if is_controller %}
+{%- raw %}
     CinderAPIDown:
       if: >-
         max(openstack_api_check_status{service=~"cinder.+"}) by (service) == 0
@@ -12,4 +19,17 @@ server:
         summary: "Endpoint check for '{{ $labels.service }}' is down"
         description: >-
             Endpoint check for '{{ $labels.service }}' is down for 2 minutes
-{% endraw %}
+{%- endraw %}
+{%- endif %}
+    CinderErrorLogsTooHigh:
+      {%- set log_threshold = prometheus_server.get('alert', {}).get('CinderErrorLogsTooHigh', {}).get('var', {}).get('threshold', 0.2 ) %}
+      if: >-
+        sum(rate(log_messages{service="cinder",level=~"error|emergency|fatal"}[5m])) without (level) > {{ log_threshold }}
+{%- raw %}
+      labels:
+        severity: warning
+        service: "{{ $labels.service }}"
+      annotations:
+        summary: 'Too many errors in {{ $labels.service }} logs'
+        description: 'The rate of errors in {{ $labels.service }} logs over the last 5 minutes is too high on node {{ $labels.host }} (current value={{ $value }}, threshold={%- endraw %}{{ log_threshold }}).'
+{%- endif %}
