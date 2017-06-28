@@ -5,4 +5,5 @@ agent:
     http_response:
       cinder-api:
         address: "http://{{ controller.osapi.host|replace('0.0.0.0', '127.0.0.1') }}:8776/"
+        expected_code: {% if controller.version in ('juno', 'kilo', 'liberty') %}200{% else %}300{% endif %}
 {%- endif %}
