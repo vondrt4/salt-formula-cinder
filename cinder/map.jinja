@@ -73,3 +73,11 @@
     },
 }, merge=pillar.cinder.get('volume', {})) %}
 
+{% set client = salt['grains.filter_by']({
+    'Debian': {
+        'pkgs': ['python-cinderclient']
+    },
+    'RedHat': {
+        'pkgs': ['python-cinderclient']
+    },
+}, merge=pillar.cinder.get('client', {})) %}

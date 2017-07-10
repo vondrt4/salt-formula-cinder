@@ -107,7 +107,7 @@ cinder_controller_services:
 
 cinder_syncdb:
   cmd.run:
-  - name: cinder-manage db sync
+  - name: 'cinder-manage db sync; sleep 5;'
   {%- if grains.get('noservices') %}
   - onlyif: /bin/false
   {%- endif %}
