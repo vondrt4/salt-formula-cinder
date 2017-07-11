@@ -18,6 +18,8 @@ cinder-volume to role volume.
       controller:
         enabled: true
         version: juno
+        cinder_uid: 304
+        cinder_gid: 304
         default_volume_type: 7k2SaS
         availability_zone_fallback: True
         database:
@@ -61,6 +63,8 @@ cinder-volume to role volume.
       volume:
         enabled: true
         version: juno
+        cinder_uid: 304
+        cinder_gid: 304
         default_volume_type: 7k2SaS
         database:
           engine: mysql

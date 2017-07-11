@@ -1,8 +1,8 @@
 {%- from "cinder/map.jinja" import controller with context %}
 {%- if controller.get('enabled', False) %}
 
-include:
-- cinder.user
+{%- set user = controller %}
+{%- include "cinder/user.sls" %}
 
 cinder_controller_packages:
   pkg.installed:

@@ -3,8 +3,9 @@ cinder_user:
   user.present:
     - name: cinder
     - home: /var/lib/cinder
-    - uid: 304
-    - gid: 304
+    {# note: cinder uid/gid values would not be evaluated after user is created. #}
+    - uid: {{ user.cinder_uid }}
+    - gid: {{ user.cinder_gid }}
     - shell: /bin/false
     - system: True
     - require_in:
@@ -18,7 +19,8 @@ cinder_user:
 cinder_group:
   group.present:
     - name: cinder
-    - gid: 304
+    {# note: cinder uid/gid values would not be evaluated after user is created. #}
+    - gid: {{ user.cinder_gid }}
     - system: True
     - require_in:
       - user: cinder_user

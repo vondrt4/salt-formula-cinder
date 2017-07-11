@@ -1,8 +1,10 @@
 {%- from "cinder/map.jinja" import volume with context %}
 {%- if volume.enabled %}
 
-include:
-- cinder.user
+{%- if pillar.cinder.controller is not defined %}
+{%- set user = volume %} 
+{%- include "cinder/user.sls" %}
+{%- endif %}
 
 cinder_volume_packages:
   pkg.installed:
