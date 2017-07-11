@@ -1,8 +1,8 @@
 {%- from "cinder/map.jinja" import volume with context %}
 {%- if volume.enabled %}
 
-{%- if pillar.cinder.controller is not defined %}
-{%- set user = volume %} 
+{%- if not pillar.cinder.get('controller', {}).get('enabled', False) %}
+{%- set user = volume %}
 {%- include "cinder/user.sls" %}
 {%- endif %}
 
