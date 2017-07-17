@@ -33,21 +33,60 @@ verifier:
   sudo: true
 
 platforms:
-  - name: ubuntu-trusty
+  - name: <%=ENV['PLATFORM'] || 'ubuntu-xenial'%>
     driver_config:
-      image: trevorj/salty-whales:trusty
-      platform: ubuntu
-
-  - name: ubuntu-xenial
-    driver_config:
-      image: trevorj/salty-whales:xenial
+      image: <%=ENV['PLATFORM'] || 'trevorj/salty-whales:xenial'%>
       platform: ubuntu
 
 suites:
 
-  - name: <%=ENV['SUITE'] || 'ceph_single'%>
+  - name: ceph_single
     provisioner:
       pillars-from-files:
-        cinder.sls: tests/pillar/<%=ENV['SUITE'] || 'ceph_single'%>.sls
+        cinder.sls: tests/pillar/ceph_single.sls
 
+  - name: control_cluster
+    provisioner:
+      pillars-from-files:
+        cinder.sls: tests/pillar/control_cluster.sls
+
+  - name: control_single
+    provisioner:
+      pillars-from-files:
+        cinder.sls: tests/pillar/control_single.sls
+
+  - name: gpfs_single
+    provisioner:
+      pillars-from-files:
+        cinder.sls: tests/pillar/gpfs_single.sls
+
+  - name: hp3par_single
+    provisioner:
+      pillars-from-files:
+        cinder.sls: tests/pillar/hp3par_single.sls
+
+  - name: lefthand_single
+    provisioner:
+      pillars-from-files:
+        cinder.sls: tests/pillar/lefthand_single.sls
+
+  - name: solidfire_single
+    provisioner:
+      pillars-from-files:
+        cinder.sls: tests/pillar/solidfire_single.sls
+
+  - name: storwize_single
+    provisioner:
+      pillars-from-files:
+        cinder.sls: tests/pillar/storwize_single.sls
+
+  - name: volume_single
+    provisioner:
+      pillars-from-files:
+        cinder.sls: tests/pillar/volume_single.sls
+
+  - name: vsp_single
+    provisioner:
+      pillars-from-files:
+        cinder.sls: tests/pillar/vsp_single.sls
 # vim: ft=yaml sw=2 ts=2 sts=2 tw=125

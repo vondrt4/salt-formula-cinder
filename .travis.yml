@@ -17,23 +17,33 @@ install:
   - bundle install
 
 env:
-    - SUITE=ceph_single
-    - SUITE=control_cluster
-    - SUITE=control_single
-    - SUITE=gpfs_single
-    - SUITE=hp3par_single
-    - SUITE=lefthand_single
-    - SUITE=solidfire_single
-    - SUITE=storwize_single
-    - SUITE=volume_single
-    - SUITE=vsp_single
+    - PLATFORM=trevorj/salty-whales:trusty SUITE=ceph_single
+    - PLATFORM=trevorj/salty-whales:xenial SUITE=ceph_single
+    - PLATFORM=trevorj/salty-whales:trusty SUITE=control_cluster
+    - PLATFORM=trevorj/salty-whales:xenial SUITE=control_cluster
+    - PLATFORM=trevorj/salty-whales:trusty SUITE=control_single
+    - PLATFORM=trevorj/salty-whales:xenial SUITE=control_single
+    - PLATFORM=trevorj/salty-whales:trusty SUITE=gpfs_single
+    - PLATFORM=trevorj/salty-whales:xenial SUITE=gpfs_single
+    - PLATFORM=trevorj/salty-whales:trusty SUITE=hp3par_single
+    - PLATFORM=trevorj/salty-whales:xenial SUITE=hp3par_single
+    - PLATFORM=trevorj/salty-whales:trusty SUITE=lefthand_single
+    - PLATFORM=trevorj/salty-whales:xenial SUITE=lefthand_single
+    - PLATFORM=trevorj/salty-whales:trusty SUITE=solidfire_single
+    - PLATFORM=trevorj/salty-whales:xenial SUITE=solidfire_single
+    - PLATFORM=trevorj/salty-whales:trusty SUITE=storwize_single
+    - PLATFORM=trevorj/salty-whales:xenial SUITE=storwize_single
+    - PLATFORM=trevorj/salty-whales:trusty SUITE=volume_single
+    - PLATFORM=trevorj/salty-whales:xenial SUITE=volume_single
+    - PLATFORM=trevorj/salty-whales:trusty SUITE=vsp_single
+    - PLATFORM=trevorj/salty-whales:xenial SUITE=vsp_single
 
 before_script:
   - set -o pipefail
   - make test | tail
 
 script:
-  - test ! -e .kitchen.yml || bundle exec kitchen test -t tests/integration
+  - KITCHEN_LOCAL_YAML=.kitchen.travis.yml bundle exec kitchen test -t tests/integration
 
 notifications:
   webhooks:
