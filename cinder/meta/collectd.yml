@@ -1,12 +1,15 @@
 {%- if pillar.cinder.controller is defined %}
 {%- from "cinder/map.jinja" import controller with context %}
-{%- if pillar.cinder.controller.get('enabled', False) %}
+{%- if controller.get('enabled', False) %}
+{%- if controller.get('osapi') %}
 local_plugin:
   collectd_check_local_endpoint:
     endpoint:
       cinder-api:
         expected_code: {% if controller.version in ('juno', 'kilo', 'liberty') %}200{% else %}300{% endif %}
         url: "http://{{ controller.osapi.host|replace('0.0.0.0', '127.0.0.1') }}:8776/"
+{%- endif %}
+{%- if controller.get('identity') %}
 remote_plugin:
   openstack_cinder:
     plugin: python
@@ -24,5 +27,6 @@ remote_plugin:
     password: {{ controller.identity.password }}
     tenant: {{ controller.identity.tenant }}
     region: {{ controller.identity.region }}
+{%- endif %}
 {%- endif %}
 {%- endif %}

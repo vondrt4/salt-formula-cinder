@@ -1,5 +1,4 @@
-{%- from "cinder/map.jinja" import controller as controller with context %}
-{%- from "cinder/map.jinja" import volume as volume with context %}
+{%- from "cinder/map.jinja" import controller, volume, monitoring with context %}
 {%- set is_controller = controller.get('enabled', False) %}
 {%- set is_volume = volume.get('enabled', False) %}
 
@@ -22,7 +21,7 @@ server:
 {%- endraw %}
 {%- endif %}
     CinderErrorLogsTooHigh:
-      {%- set log_threshold = prometheus_server.get('alert', {}).get('CinderErrorLogsTooHigh', {}).get('var', {}).get('threshold', 0.2 ) %}
+      {%- set log_threshold = monitoring.error_log_rate|float %}
       if: >-
         sum(rate(log_messages{service="cinder",level=~"error|emergency|fatal"}[5m])) without (level) > {{ log_threshold }}
 {%- raw %}
