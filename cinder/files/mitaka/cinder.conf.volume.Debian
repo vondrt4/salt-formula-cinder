@@ -50,6 +50,10 @@ storage_availability_zone={{volume.storage_availability_zone}}
 default_availability_zone={{volume.default_availability_zone}}
 {%- endif %}
 
+# Enables the Force option on upload_to_image. This enables running
+# upload_volume on in-use volumes for backends that support it. (boolean value)
+#enable_force_upload = false
+{{ volume.get('enable_force_upload', False)|lower }}
 
 #RPC response timeout recommended by Hitachi
 rpc_response_timeout=3600
