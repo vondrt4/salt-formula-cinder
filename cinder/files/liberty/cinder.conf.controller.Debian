@@ -105,6 +105,12 @@ log_dir=/var/log/cinder
 use_syslog=false
 verbose=True
 lock_path=/var/lock/cinder
+{%- if controller.nas_secure_file_permissions is defined %}
+nas_secure_file_permissions={{ controller.nas_secure_file_permissions }}
+{%- endif %}
+{%- if controller.nas_secure_file_operations is defined %}
+nas_secure_file_operations={{ controller.nas_secure_file_operations }}
+{%- endif %}
 
 [oslo_concurrency]
 

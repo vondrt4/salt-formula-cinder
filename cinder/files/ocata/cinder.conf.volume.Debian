@@ -99,6 +99,12 @@ transport_url = rabbit://{{ volume.message_queue.user }}:{{ volume.message_queue
 {%- set backup_backend_fragment = "cinder/files/backup_backend/_" + volume.backup.engine + ".conf" %}
 {%- include backup_backend_fragment %}
 {%- endif %}
+{%- if volume.nas_secure_file_permissions is defined %}
+nas_secure_file_permissions={{ volume.nas_secure_file_permissions }}
+{%- endif %}
+{%- if volume.nas_secure_file_operations is defined %}
+nas_secure_file_operations={{ volume.nas_secure_file_operations }}
+{%- endif %}
 
 [oslo_messaging_notifications]
 {%- if volume.notification is mapping %}

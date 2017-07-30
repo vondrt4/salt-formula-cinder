@@ -94,6 +94,12 @@ query_volume_filters = {{ controller.query_volume_filters|join(",") }}
 {%- set backup_backend_fragment = "cinder/files/backup_backend/_" + controller.backup.engine + ".conf" %}
 {%- include backup_backend_fragment %}
 {%- endif %}
+{%- if controller.nas_secure_file_permissions is defined %}
+nas_secure_file_permissions={{ controller.nas_secure_file_permissions }}
+{%- endif %}
+{%- if controller.nas_secure_file_operations is defined %}
+nas_secure_file_operations={{ controller.nas_secure_file_operations }}
+{%- endif %}
 
 [oslo_messaging_notifications]
 {%- if controller.notification is mapping %}
