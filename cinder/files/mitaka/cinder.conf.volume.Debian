@@ -85,6 +85,12 @@ nas_secure_file_permissions={{ volume.nas_secure_file_permissions }}
 {%- if volume.nas_secure_file_operations is defined %}
 nas_secure_file_operations={{ volume.nas_secure_file_operations }}
 {%- endif %}
+{%- if volume.cinder_internal_tenant_user_id is defined %}
+cinder_internal_tenant_user_id={{ volume.cinder_internal_tenant_user_id }}
+{%- endif %}
+{%- if volume.cinder_internal_tenant_project_id is defined %}
+cinder_internal_tenant_project_id={{ volume.cinder_internal_tenant_project_id }}
+{%- endif %}
 
 [oslo_messaging_notifications]
 {%- if volume.notification is mapping %}

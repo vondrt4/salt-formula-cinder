@@ -111,6 +111,12 @@ nas_secure_file_permissions={{ controller.nas_secure_file_permissions }}
 {%- if controller.nas_secure_file_operations is defined %}
 nas_secure_file_operations={{ controller.nas_secure_file_operations }}
 {%- endif %}
+{%- if controller.cinder_internal_tenant_user_id is defined %}
+cinder_internal_tenant_user_id={{ controller.cinder_internal_tenant_user_id }}
+{%- endif %}
+{%- if controller.cinder_internal_tenant_project_id is defined %}
+cinder_internal_tenant_project_id={{ controller.cinder_internal_tenant_project_id }}
+{%- endif %}
 
 [oslo_concurrency]
 

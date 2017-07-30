@@ -22,6 +22,8 @@ cinder-volume to role volume.
         cinder_gid: 304
         nas_secure_file_permissions: false
         nas_secure_file_operations: false
+        cinder_internal_tenant_user_id: f46924c112a14c80ab0a24a613d95eef
+        cinder_internal_tenant_project_id: b7455b8974bb4064ad247c8f375eae6c
         default_volume_type: 7k2SaS
         availability_zone_fallback: True
         database:
@@ -69,6 +71,8 @@ cinder-volume to role volume.
         cinder_gid: 304
         nas_secure_file_permissions: false
         nas_secure_file_operations: false
+        cinder_internal_tenant_user_id: f46924c112a14c80ab0a24a613d95eef
+        cinder_internal_tenant_project_id: b7455b8974bb4064ad247c8f375eae6c
         default_volume_type: 7k2SaS
         database:
           engine: mysql
