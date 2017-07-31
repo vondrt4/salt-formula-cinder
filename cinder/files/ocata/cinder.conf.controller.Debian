@@ -1,4 +1,4 @@
-{%- from "cinder/map.jinja" import controller with context %}
+{%- from "cinder/map.jinja" import controller, system_cacerts_file with context %}
 
 [DEFAULT]
 rootwrap_config = /etc/cinder/rootwrap.conf
@@ -65,7 +65,6 @@ default_availability_zone={{controller.default_availability_zone}}
 rpc_response_timeout=3600
 
 #Rabbit
-rpc_backend=rabbit
 control_exchange=cinder
 
 
@@ -96,14 +95,15 @@ nova_catalog_info = compute:nova:{{ controller.identity.get('endpoint_type', 'pu
 
 osapi_volume_extension = cinder.api.contrib.standard_extensions
 
+{%- set rabbit_port = controller.message_queue.get('port', 5671 if controller.message_queue.get('ssl',{}).get('enabled', False)  else 5672) %}
 {%- if controller.message_queue.members is defined %}
 transport_url = rabbit://{% for member in controller.message_queue.members -%}
-                             {{ controller.message_queue.user }}:{{ controller.message_queue.password }}@{{ member.host }}:{{ member.get('port', 5672) }}
+                             {{ controller.message_queue.user }}:{{ controller.message_queue.password }}@{{ member.host }}:{{ member.get('port',rabbit_port) }}
                              {%- if not loop.last -%},{%- endif -%}
                          {%- endfor -%}
                              /{{ controller.message_queue.virtual_host }}
 {%- else %}
-transport_url = rabbit://{{ controller.message_queue.user }}:{{ controller.message_queue.password }}@{{ controller.message_queue.host }}:{{ controller.message_queue.port }}/{{ controller.message_queue.virtual_host }}
+transport_url = rabbit://{{ controller.message_queue.user }}:{{ controller.message_queue.password }}@{{ controller.message_queue.host }}:{{ rabbit_port }}/{{ controller.message_queue.virtual_host }}
 {%- endif %}
 
 {%- if controller.backup.engine != None %}
@@ -135,7 +135,23 @@ lock_path=/var/lock/cinder
 
 enable_proxy_headers_parsing = True
 
+{%- if controller.message_queue.get('ssl',{}).get('enabled', False) %}
 [oslo_messaging_rabbit]
+rabbit_use_ssl=true
+
+{%- if controller.message_queue.ssl.version is defined %}
+kombu_ssl_version = {{ controller.message_queue.ssl.version }}
+{%- elif salt['grains.get']('pythonversion') > [2,7,8] %}
+kombu_ssl_version = TLSv1_2
+{%- endif %}
+
+{%- if controller.message_queue.ssl.cacert_file is defined %}
+kombu_ssl_ca_certs = {{ controller.message_queue.ssl.cacert_file }}
+{%- else %}
+kombu_ssl_ca_certs={{ system_cacerts_file }}
+{%- endif %}
+{%- endif %}
+
 
 [keystone_authtoken]
 signing_dir=/tmp/keystone-signing-cinder

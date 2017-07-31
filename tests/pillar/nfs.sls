@@ -3,6 +3,13 @@ cinder:
     enabled: true
     version: liberty
     default_volume_type: nfs-driver
+    message_queue:
+      engine: rabbitmq
+      host: 127.0.0.1
+      port: 5672
+      user: openstack
+      password: pwd
+      virtual_host: '/openstack'
     backend:
       nfs-driver:
         engine: nfs
@@ -16,6 +23,13 @@ cinder:
     enabled: true
     version: liberty
     default_volume_type: nfs-driver
+    message_queue:
+      engine: rabbitmq
+      host: 127.0.0.1
+      port: 5672
+      user: openstack
+      password: pwd
+      virtual_host: '/openstack'
     backend:
       nfs-driver:
         enabled: true

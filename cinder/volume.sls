@@ -1,4 +1,4 @@
-{%- from "cinder/map.jinja" import volume with context %}
+{%- from "cinder/map.jinja" import volume, system_cacerts_file with context %}
 {%- if volume.enabled %}
 
 {%- if not pillar.cinder.get('controller', {}).get('enabled', False) %}
@@ -21,6 +21,20 @@ cinder_volume_packages:
     - service: cinder_volume_services
 
 {%- if not pillar.cinder.get('controller', {}).get('enabled', False) %}
+
+{%- if volume.message_queue.get('ssl',{}).get('enabled', False) %}
+rabbitmq_ca:
+{%- if volume.message_queue.ssl.cacert is defined %}
+  file.managed:
+    - name: {{ volume.message_queue.ssl.cacert_file }}
+    - contents_pillar: cinder:volume:message_queue:ssl:cacert
+    - mode: 0444
+    - makedirs: true
+{%- else %}
+  file.exists:
+   - name: {{ volume.message_queue.ssl.get('cacert_file', system_cacerts_file) }}
+{%- endif %}
+{%- endif %}
 
 /etc/cinder/cinder.conf:
   file.managed:
@@ -50,6 +64,9 @@ cinder_backup_services:
   - onlyif: /bin/false
   {%- endif %}
   - watch:
+    {%- if volume.message_queue.get('ssl',{}).get('enabled', False) %}
+    - file: rabbitmq_ca
+    {%- endif %}
     - file: /etc/cinder/cinder.conf
     - file: /etc/cinder/api-paste.ini
 
@@ -65,6 +82,9 @@ cinder_volume_services:
   - onlyif: /bin/false
   {%- endif %}
   - watch:
+    {%- if volume.message_queue.get('ssl',{}).get('enabled', False) %}
+    - file: rabbitmq_ca
+    {%- endif %}
     - file: /etc/cinder/cinder.conf
     - file: /etc/cinder/api-paste.ini
 
