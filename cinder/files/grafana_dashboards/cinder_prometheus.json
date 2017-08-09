@@ -1398,7 +1398,7 @@
             "rgba(50, 172, 45, 0.97)"
           ],
           "datasource": "prometheus",
-          "format": "none",
+          "format": "decbytes",
           "gauge": {
             "maxValue": 100,
             "minValue": 0,
@@ -1475,7 +1475,7 @@
             "rgba(50, 172, 45, 0.97)"
           ],
           "datasource": "prometheus",
-          "format": "none",
+          "format": "decbytes",
           "gauge": {
             "maxValue": 100,
             "minValue": 0,
@@ -1552,7 +1552,7 @@
             "rgba(50, 172, 45, 0.97)"
           ],
           "datasource": "prometheus",
-          "format": "none",
+          "format": "decbytes",
           "gauge": {
             "maxValue": 100,
             "minValue": 0,
@@ -1680,7 +1680,7 @@
           },
           "yaxes": [
             {
-              "format": "short",
+              "format": "decbytes",
               "logBase": 1,
               "max": null,
               "min": 0,
@@ -2012,7 +2012,7 @@
             "rgba(50, 172, 45, 0.97)"
           ],
           "datasource": "prometheus",
-          "format": "none",
+          "format": "decbytes",
           "gauge": {
             "maxValue": 100,
             "minValue": 0,
@@ -2089,7 +2089,7 @@
             "rgba(50, 172, 45, 0.97)"
           ],
           "datasource": "prometheus",
-          "format": "none",
+          "format": "decbytes",
           "gauge": {
             "maxValue": 100,
             "minValue": 0,
@@ -2166,7 +2166,7 @@
             "rgba(50, 172, 45, 0.97)"
           ],
           "datasource": "prometheus",
-          "format": "none",
+          "format": "decbytes",
           "gauge": {
             "maxValue": 100,
             "minValue": 0,
@@ -2294,7 +2294,7 @@
           },
           "yaxes": [
             {
-              "format": "short",
+              "format": "decbytes",
               "logBase": 1,
               "max": null,
               "min": 0,
@@ -2380,6 +2380,6 @@
   },
   "timezone": "browser",
   "title": "Cinder",
-  "version": 3
+  "version": 4
 }
 {% endraw %}
