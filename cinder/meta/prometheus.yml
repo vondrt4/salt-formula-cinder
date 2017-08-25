@@ -18,6 +18,39 @@ server:
         summary: "Endpoint check for '{{ $labels.service }}' is down"
         description: >-
             Endpoint check for '{{ $labels.service }}' is down for 2 minutes
+    CinderSomeServicesDown:
+      if: >-
+          openstack_cinder_services{state="down",service="cinder-volume|cinder-scheduler"} > 0 and ignoring (state) openstack_cinder_services{state="up",services="cinder-volume|cinder-scheduler"} >= 2
+      for: 2m
+      labels:
+        severity: warning
+        service: "{{ $labels.service }}"
+      annotations:
+        summary: "Some {{ $labels.service }} services are down"
+        description: >-
+            {{ $value }} {{ $labels.service }} services are down for 2 minutes
+    CinderOnlyOneServiceUp:
+      if: >-
+          openstack_cinder_services{state="up",service="cinder-volume|cinder-scheduler"} == 1 and ignoring (state) openstack_cinder_services{state="down",service="cinder-volume|cinder-scheduler"} > 0
+      for: 2m
+      labels:
+        severity: critical
+        service: "{{ $labels.service }}"
+      annotations:
+        summary: "Only one {{ $labels.service }} service is up"
+        description: >-
+            Only one {{ $labels.service }} service is up for 2 minutes
+    CinderAllServicesDown:
+      if: >-
+        openstack_cinder_services{state="up",service="cinder-volume|cinder-scheduler"}) == 0
+      for: 2m
+      labels:
+        severity: down
+        service: "{{ $labels.service }}"
+      annotations:
+        summary: "All {{ $labels.service }} services are down"
+        description: >-
+            All {{ $labels.service }} services are down for 2 minutes
 {%- endraw %}
 {%- endif %}
     CinderErrorLogsTooHigh:
