@@ -1,5 +1,10 @@
 cinder:
   controller:
+    osapi:
+      host: 127.0.0.1
+    glance:
+      host: 127.0.0.1
+      port: 9292
     enabled: true
     version: liberty
     default_volume_type: nfs-driver

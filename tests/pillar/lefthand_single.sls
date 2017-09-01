@@ -20,10 +20,10 @@ cinder:
       password: pwd
       region: regionOne
     osapi:
-        host: 127.0.0.1
+      host: 127.0.0.1
     glance:
-        host: 127.0.0.1
-        port: 9292
+      host: 127.0.0.1
+      port: 9292
     logging:
       log_appender: false
       log_handlers:
@@ -72,8 +72,8 @@ cinder:
       host: 127.0.0.1
     osapi_max_limit: 500
     glance:
-        host: 127.0.0.1
-        port: 9292
+      host: 127.0.0.1
+      port: 9292
     logging:
       log_appender: false
       log_handlers:
