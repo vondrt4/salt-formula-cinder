@@ -15,18 +15,32 @@ provisioner:
   grains:
     noservices: True
   dependencies:
+    - name: linux
+      repo: git
+      source: https://github.com/salt-formulas/salt-formula-linux
     - name: keystone
       repo: git
       source: https://github.com/salt-formulas/salt-formula-keystone
   state_top:
     base:
       "*":
+        - linux.system
         - cinder
   pillars:
     top.sls:
       base:
         "*":
+          - linux_repo_openstack
           - cinder
+          - release
+    release.sls:
+      cinder:
+        controller:
+          version: <%= ENV['OS_VERSION'] || 'ocata' %>
+        volume:
+          version: <%= ENV['OS_VERSION'] || 'ocata' %>
+  pillars-from-files:
+    linux_repo_openstack.sls: tests/pillar/repo_mcp_openstack_<%= ENV['OS_VERSION'] || 'ocata' %>.sls
 
 verifier:
   name: inspec
@@ -49,11 +63,21 @@ suites:
     provisioner:
       pillars-from-files:
         cinder.sls: tests/pillar/control_cluster.sls
+      pillars:
+        release.sls:
+          cinder:
+            volume:
+              enabled: false
 
   - name: control_single
     provisioner:
       pillars-from-files:
         cinder.sls: tests/pillar/control_single.sls
+      pillars:
+        release.sls:
+          cinder:
+            volume:
+              enabled: false
 
   - name: gpfs_single
     provisioner:
@@ -89,4 +113,5 @@ suites:
     provisioner:
       pillars-from-files:
         cinder.sls: tests/pillar/vsp_single.sls
+
 # vim: ft=yaml sw=2 ts=2 sts=2 tw=125

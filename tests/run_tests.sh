@@ -126,6 +126,7 @@ prepare() {
 
 run() {
     for pillar in ${PILLARDIR}/*.sls; do
+        grep ${FORMULA_NAME}: ${pillar} &>/dev/null || continue
         state_name=$(basename ${pillar%.sls})
         salt_run --id=${state_name} state.show_sls ${FORMULA_NAME} || (log_err "Execution of ${FORMULA_NAME}.${state_name} failed"; exit 1)
     done
