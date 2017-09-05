@@ -42,7 +42,7 @@ server:
             Only one {{ $labels.service }} service is up for 2 minutes
     CinderAllServicesDown:
       if: >-
-        openstack_cinder_services{state="up",service="cinder-volume|cinder-scheduler"}) == 0
+        openstack_cinder_services{state="up",service="cinder-volume|cinder-scheduler"} == 0
       for: 2m
       labels:
         severity: down
