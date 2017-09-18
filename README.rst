@@ -366,6 +366,8 @@ Cinder setup with NetApp
             transport_type: https
             lun_space_reservation: enabled
             use_multipath_for_image_xfer: True
+            nas_secure_file_operations: false
+            nas_secure_file_permissions: false
             devices:
               - 172.18.1.2:/vol_1
               - 172.18.1.2:/vol_2
