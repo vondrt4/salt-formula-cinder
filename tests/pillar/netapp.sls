@@ -2,6 +2,13 @@ cinder:
   controller:
     enabled: true
     version: mitaka
+    message_queue:
+      engine: rabbitmq
+      host: 127.0.0.1
+      port: 5672
+      user: openstack
+      password: pwd
+      virtual_host: '/openstack'
     backend:
       netapp:
         engine: netapp
@@ -22,6 +29,13 @@ cinder:
   volume:
     enabled: true
     version: mitaka
+    message_queue:
+      engine: rabbitmq
+      host: 127.0.0.1
+      port: 5672
+      user: openstack
+      password: pwd
+      virtual_host: '/openstack'
 linux:
   system:
     package:

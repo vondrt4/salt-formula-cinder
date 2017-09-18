@@ -1,4 +1,4 @@
-{%- from "cinder/map.jinja" import controller with context %}
+{%- from "cinder/map.jinja" import controller, system_cacerts_file with context %}
 {%- if controller.get('enabled', False) %}
 
 {%- set user = controller %}
@@ -63,6 +63,9 @@ cinder_api_service:
   - onlyif: /bin/false
   {%- endif %}
   - watch:
+    {%- if controller.message_queue.get('ssl',{}).get('enabled', False) %}
+    - file: rabbitmq_ca
+    {%- endif %}
     - file: /etc/cinder/cinder.conf
     - file: /etc/cinder/api-paste.ini
     - file: /etc/apache2/conf-available/cinder-wsgi.conf
@@ -77,6 +80,9 @@ cinder_api_service:
   - onlyif: /bin/false
   {%- endif %}
   - watch:
+    {%- if controller.message_queue.get('ssl',{}).get('enabled', False) %}
+    - file: rabbitmq_ca
+    {%- endif %}
     - file: /etc/cinder/cinder.conf
     - file: /etc/cinder/api-paste.ini
 
@@ -102,6 +108,9 @@ cinder_controller_services:
   - onlyif: /bin/false
   {%- endif %}
   - watch:
+    {%- if controller.message_queue.get('ssl',{}).get('enabled', False) %}
+    - file: rabbitmq_ca
+    {%- endif %}
     - file: /etc/cinder/cinder.conf
     - file: /etc/cinder/api-paste.ini
 
@@ -175,9 +184,26 @@ cinder_backup_services:
   - names: {{ controller.backup.services }}
   - enable: true
   - watch:
+    {%- if controller.message_queue.get('ssl',{}).get('enabled', False) %}
+    - file: rabbitmq_ca
+    {%- endif %}
     - file: /etc/cinder/cinder.conf
     - file: /etc/cinder/api-paste.ini
 
+{%- endif %}
+
+{%- if controller.message_queue.get('ssl',{}).get('enabled', False) %}
+rabbitmq_ca:
+{%- if controller.message_queue.ssl.cacert is defined %}
+  file.managed:
+    - name: {{ controller.message_queue.ssl.cacert_file }}
+    - contents_pillar: cinder:controller:message_queue:ssl:cacert
+    - mode: 0444
+    - makedirs: true
+{%- else %}
+  file.exists:
+   - name: {{ controller.message_queue.ssl.get('cacert_file', system_cacerts_file) }}
+{%- endif %}
 {%- endif %}
 
 {%- endif %}

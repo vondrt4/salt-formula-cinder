@@ -59,7 +59,7 @@ cinder-volume to role volume.
             multihost: true
             multipath: true
             pool: SAS7K2
-        audit: 
+        audit:
           enabled: false
         osapi_max_limit: 500
 
@@ -160,6 +160,62 @@ Client-side RabbitMQ HA setup for volume component
           password: pwd
           virtual_host: '/openstack'
         ....
+
+
+**Client-side RabbitMQ TLS configuration.**
+
+|
+
+To enable TLS for oslo.messaging you need to provide the CA certificate.
+By default system-wide CA certs are used. Nothing should be specified except `ssl.enabled`.
+
+.. code-block:: yaml
+
+  cinder:
+    controller or volume:
+      ....
+      message_queue:
+        ssl:
+          enabled: True
+
+
+
+Use `cacert_file` option to specify the CA-cert file path explicitly:
+
+.. code-block:: yaml
+
+  cinder:
+    controller or volume:
+      ....
+      message_queue:
+        ssl:
+          enabled: True
+          cacert_file: /etc/ssl/rabbitmq-ca.pem
+
+To manage content of the `cacert_file` use the `cacert` option:
+
+.. code-block:: yaml
+
+  cinder:
+    controller or volume:
+      ....
+      message_queue:
+        ssl:
+          enabled: True
+          cacert: |
+
+          -----BEGIN CERTIFICATE-----
+                    ...
+          -----END CERTIFICATE-------
+
+          cacert_file: /etc/openstack/rabbitmq-ca.pem
+
+
+Notice:
+ * The `message_queue.port` is set to **5671** (AMQPS) by default if `ssl.enabled=True`.
+ * Use `message_queue.ssl.version` if you need to specify protocol version. By default is TLSv1 for python < 2.7.9 and TLSv1_2 for version above.
+
+
 
 Cinder setup with zeroing deleted volumes
 
@@ -438,7 +494,7 @@ Cinder setup with IBM GPFS filesystem
             type_name: GPFS-SILVER
             engine: gpfs
             mount_point: '/mnt/gpfs-openstack/cinder/silver'
-  
+
 Cinder setup with HP LeftHand
 
 .. code-block:: yaml
@@ -460,7 +516,7 @@ Extra parameters for HP LeftHand
 
 .. code-block:: yaml
 
-    cinder type-key normal-storage set hplh:data_pl=r-10-2 hplh:provisioning=full 
+    cinder type-key normal-storage set hplh:data_pl=r-10-2 hplh:provisioning=full
 
 Cinder setup with Solidfire
 
@@ -525,7 +581,7 @@ Enable cinder-backup service for ceph
           ceph_user: cinder
           ceph_chunk_size: 134217728
           restore_discard_excess_bytes: false
-          
+
 Enable auditing filter, ie: CADF
 
 .. code-block:: yaml

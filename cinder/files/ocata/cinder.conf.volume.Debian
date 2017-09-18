@@ -1,4 +1,4 @@
-{%- from "cinder/map.jinja" import volume with context %}
+{%- from "cinder/map.jinja" import volume, system_cacerts_file with context %}
 
 [DEFAULT]
 rootwrap_config = /etc/cinder/rootwrap.conf
@@ -62,7 +62,6 @@ default_availability_zone={{volume.default_availability_zone}}
 rpc_response_timeout=3600
 
 #Rabbit
-rpc_backend=rabbit
 control_exchange=cinder
 
 
@@ -85,14 +84,15 @@ verbose=True
 nova_catalog_admin_info = compute:nova:adminURL
 nova_catalog_info = compute:nova:{{ volume.identity.get('endpoint_type', 'publicURL') }}
 
+{%- set rabbit_port = volume.message_queue.get('port', 5671 if volume.message_queue.get('ssl',{}).get('enabled', False)  else 5672) %}
 {%- if volume.message_queue.members is defined %}
 transport_url = rabbit://{% for member in volume.message_queue.members -%}
-                             {{ volume.message_queue.user }}:{{ volume.message_queue.password }}@{{ member.host }}:{{ member.get('port', 5672) }}
+                             {{ volume.message_queue.user }}:{{ volume.message_queue.password }}@{{ member.host }}:{{ member.get('port',rabbit_port) }}
                              {%- if not loop.last -%},{%- endif -%}
                          {%- endfor -%}
                              /{{ volume.message_queue.virtual_host }}
 {%- else %}
-transport_url = rabbit://{{ volume.message_queue.user }}:{{ volume.message_queue.password }}@{{ volume.message_queue.host }}:{{ volume.message_queue.port }}/{{ volume.message_queue.virtual_host }}
+transport_url = rabbit://{{ volume.message_queue.user }}:{{ volume.message_queue.password }}@{{ volume.message_queue.host }}:{{ rabbit_port }}/{{ volume.message_queue.virtual_host }}
 {%- endif %}
 
 {%- if volume.backup.engine != None %}
@@ -130,7 +130,22 @@ lock_path=/var/lock/cinder
 
 enable_proxy_headers_parsing = True
 
+{%- if volume.message_queue.get('ssl',{}).get('enabled', False) %}
 [oslo_messaging_rabbit]
+rabbit_use_ssl=true
+
+{%- if volume.message_queue.ssl.version is defined %}
+kombu_ssl_version = {{ volume.message_queue.ssl.version }}
+{%- elif salt['grains.get']('pythonversion') > [2,7,8] %}
+kombu_ssl_version = TLSv1_2
+{%- endif %}
+
+{%- if volume.message_queue.ssl.cacert_file is defined %}
+kombu_ssl_ca_certs = {{ volume.message_queue.ssl.cacert_file }}
+{%- else %}
+kombu_ssl_ca_certs={{ system_cacerts_file }}
+{%- endif %}
+{%- endif %}
 
 [keystone_authtoken]
 signing_dir=/tmp/keystone-signing-cinder
