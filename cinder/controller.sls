@@ -114,7 +114,6 @@ cinder_syncdb:
   - require:
     - service: cinder_controller_services
 
-{# new way #}
 {%- if not grains.get('noservices', False) %}
 
 {%- for backend_name, backend in controller.get('backend', {}).iteritems() %}
@@ -164,28 +163,6 @@ cinder_type_update_{{ backend_name }}:
 {%- endfor %}
 
 {%- endif %}
-
-{# old way #}
-
-{% for type in controller.get('types', []) %}
-
-cinder_type_create_{{ type.name }}:
-  cmd.run:
-  - name: "source /root/keystonerc; cinder type-create {{ type.name }}"
-  - unless: "source /root/keystonerc; cinder type-list | grep {{ type.name }}"
-  - shell: /bin/bash
-  - require:
-    - service: cinder_controller_services
-
-cinder_type_update_{{ type.name }}:
-  cmd.run:
-  - name: "source /root/keystonerc; cinder type-key {{ type.name }} set volume_backend_name={{ type.get('backend', type.name) }}"
-  - unless: "source /root/keystonerc; cinder extra-specs-list | grep \"{u'volume_backend_name': u'{{ type.get('backend', type.name) }}'}\""
-  - shell: /bin/bash
-  - require:
-    - cmd: cinder_type_create_{{ type.name }}
-
-{% endfor %}
 
 {%- if controller.backup.engine != None %}
 

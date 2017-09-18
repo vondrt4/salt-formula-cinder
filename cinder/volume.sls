@@ -68,8 +68,6 @@ cinder_volume_services:
     - file: /etc/cinder/cinder.conf
     - file: /etc/cinder/api-paste.ini
 
-{# new way #}
-
 {%- if volume.backend is defined %}
 
 {%- for backend_name, backend in volume.get('backend', {}).iteritems() %}
@@ -173,93 +171,5 @@ cinder_driver_fujitsu_{{ loop.index }}:
 {%- endfor %}
 
 {%- endif %}
-
-{# old way #}
-
-{%- if volume.storage is defined %}
-
-{%- if volume.storage.engine in ['iscsi', 'hp_lefthand'] %}
-
-cinder_iscsi_packages:
-  pkg.installed:
-  - names:
-    - iscsitarget
-    - open-iscsi
-    - iscsitarget-dkms
-  - require:
-    - pkg: cinder_volume_packages
-
-/etc/default/iscsitarget:
-  file.managed:
-  - source: salt://cinder/files/iscsitarget
-  - template: jinja
-  - require:
-    - pkg: cinder_iscsi_packages
-
-cinder_scsi_service:
-  service.running:
-  - names:
-    - iscsitarget
-    - open-iscsi
-  - enable: true
-  {%- if grains.get('noservices') %}
-  - onlyif: /bin/false
-  {%- endif %}
-  - watch:
-    - file: /etc/default/iscsitarget
-
-{%- endif %}
-
-{%- if volume.storage.engine == 'hitachi_vsp' %}
-
-{%- if grains.os_family == 'Debian' and volume.version == 'juno' %}
-
-hitachi_pkgs:
-  pkg.latest:
-    - names:
-      - horcm
-      - hbsd
-
-cinder_hitachi_vps_dir:
-  file.directory:
-  - name: /var/lock/hbsd
-  - user: cinder
-  - group: cinder
-
-{%- endif %}
-
-{%- endif %}
-
-{%- if volume.storage.engine == 'hp3par' %}
-
-hp3parclient:
-  pkg.latest:
-    - name: python-hp3parclient
-
-{%- endif %}
-
-{%- if volume.storage.engine == 'fujitsu' %}
-
-cinder_driver_fujitsu:
-  pkg.latest:
-    - name: cinder-driver-fujitsu
-
-{%- for type in volume.get('types', []) %}
-
-/etc/cinder/cinder_fujitsu_eternus_dx_{{ type.name }}.xml:
-  file.managed:
-  - source: salt://cinder/files/{{ volume.version }}/cinder_fujitsu_eternus_dx.xml
-  - template: jinja
-  - defaults:
-      volume_type_name: "{{ type.pool }}"
-  - require:
-    - pkg: cinder-driver-fujitsu
-
-{%- endfor %}
-
-{%- endif %}
-
-{%- endif %}
-
 
 {%- endif %}
