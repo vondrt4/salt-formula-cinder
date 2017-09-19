@@ -66,6 +66,9 @@ cinder_api_service:
     {%- if controller.message_queue.get('ssl',{}).get('enabled', False) %}
     - file: rabbitmq_ca
     {%- endif %}
+    {%- if controller.database.get('ssl',{}).get('enabled', False) %}
+    - file: mysql_ca_cinder_controller
+    {%- endif %}
     - file: /etc/cinder/cinder.conf
     - file: /etc/cinder/api-paste.ini
     - file: /etc/apache2/conf-available/cinder-wsgi.conf
@@ -82,6 +85,9 @@ cinder_api_service:
   - watch:
     {%- if controller.message_queue.get('ssl',{}).get('enabled', False) %}
     - file: rabbitmq_ca
+    {%- endif %}
+    {%- if controller.database.get('ssl',{}).get('enabled', False) %}
+    - file: mysql_ca_cinder_controller
     {%- endif %}
     - file: /etc/cinder/cinder.conf
     - file: /etc/cinder/api-paste.ini
@@ -110,6 +116,9 @@ cinder_controller_services:
   - watch:
     {%- if controller.message_queue.get('ssl',{}).get('enabled', False) %}
     - file: rabbitmq_ca
+    {%- endif %}
+    {%- if controller.database.get('ssl',{}).get('enabled', False) %}
+    - file: mysql_ca_cinder_controller
     {%- endif %}
     - file: /etc/cinder/cinder.conf
     - file: /etc/cinder/api-paste.ini
@@ -216,5 +225,21 @@ rabbitmq_ca:
    - name: {{ controller.message_queue.ssl.get('cacert_file', system_cacerts_file) }}
 {%- endif %}
 {%- endif %}
+
+{%- if controller.database.get('ssl',{}).get('enabled', False) %}
+mysql_ca_cinder_controller:
+{%- if controller.database.ssl.cacert is defined %}
+  file.managed:
+    - name: {{ controller.database.ssl.cacert_file }}
+    - contents_pillar: cinder:controller:database:ssl:cacert
+    - mode: 0444
+    - makedirs: true
+
+{%- else %}
+  file.exists:
+   - name: {{ controller.database.ssl.get('cacert_file', system_cacerts_file) }}
+{%- endif %}
+{%- endif %}
+
 
 {%- endif %}

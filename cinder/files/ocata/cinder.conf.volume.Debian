@@ -179,7 +179,7 @@ idle_timeout=3600
 max_pool_size=30
 max_retries=-1
 max_overflow=40
-connection = {{ volume.database.engine }}+pymysql://{{ volume.database.user }}:{{ volume.database.password }}@{{ volume.database.host }}/{{ volume.database.name }}?charset=utf8
+connection = {{ volume.database.engine }}+pymysql://{{ volume.database.user }}:{{ volume.database.password }}@{{ volume.database.host }}/{{ volume.database.name }}?charset=utf8{%- if volume.database.get('ssl',{}).get('enabled',False) %}&ssl_ca={{ volume.database.ssl.get('cacert_file', system_cacerts_file) }}{% endif %}
 
 {%- if volume.backend is defined %}
 

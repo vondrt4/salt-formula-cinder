@@ -36,6 +36,20 @@ rabbitmq_ca:
 {%- endif %}
 {%- endif %}
 
+{%- if volume.database.get('ssl',{}).get('enabled', False) %}
+mysql_ca_cinder_volume:
+{%- if volume.database.ssl.cacert is defined %}
+  file.managed:
+    - name: {{ volume.database.ssl.cacert_file }}
+    - contents_pillar: cinder:volume:database:ssl:cacert
+    - mode: 0444
+    - makedirs: true
+{%- else %}
+  file.exists:
+   - name: {{ volume.database.ssl.get('cacert_file', system_cacerts_file) }}
+{%- endif %}
+{%- endif %}
+
 /etc/cinder/cinder.conf:
   file.managed:
   - source: salt://cinder/files/{{ volume.version }}/cinder.conf.volume.{{ grains.os_family }}
@@ -67,6 +81,9 @@ cinder_backup_services:
     {%- if volume.message_queue.get('ssl',{}).get('enabled', False) %}
     - file: rabbitmq_ca
     {%- endif %}
+    {%- if volume.database.get('ssl',{}).get('enabled', False) %}
+    - file: mysql_ca_cinder_volume
+    {%- endif %}
     - file: /etc/cinder/cinder.conf
     - file: /etc/cinder/api-paste.ini
 
@@ -84,6 +101,9 @@ cinder_volume_services:
   - watch:
     {%- if volume.message_queue.get('ssl',{}).get('enabled', False) %}
     - file: rabbitmq_ca
+    {%- endif %}
+    {%- if volume.database.get('ssl',{}).get('enabled', False) %}
+    - file: mysql_ca_cinder_volume
     {%- endif %}
     - file: /etc/cinder/cinder.conf
     - file: /etc/cinder/api-paste.ini

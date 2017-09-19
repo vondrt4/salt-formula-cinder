@@ -18,6 +18,13 @@ cinder:
       user: cinder
       password: pwd
       region: regionOne
+    database:
+      engine: mysql
+      host: 127.0.0.1
+      port: 3306
+      name: cinder
+      user: cinder
+      password: pwd
     backend:
       nfs-driver:
         engine: nfs
@@ -31,6 +38,13 @@ cinder:
     enabled: true
     version: liberty
     default_volume_type: nfs-driver
+    database:
+      engine: mysql
+      host: 127.0.0.1
+      port: 3306
+      name: cinder
+      user: cinder
+      password: pwd
     message_queue:
       engine: rabbitmq
       host: 127.0.0.1

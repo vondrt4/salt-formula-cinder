@@ -17,6 +17,13 @@ cinder:
       user: cinder
       password: pwd
       region: regionOne
+    database:
+      engine: mysql
+      host: 127.0.0.1
+      port: 3306
+      name: cinder
+      user: cinder
+      password: pwd
     backend:
       netapp:
         engine: netapp
@@ -39,6 +46,13 @@ cinder:
   volume:
     enabled: true
     version: mitaka
+    database:
+      engine: mysql
+      host: 127.0.0.1
+      port: 3306
+      name: cinder
+      user: cinder
+      password: pwd
     message_queue:
       engine: rabbitmq
       host: 127.0.0.1
