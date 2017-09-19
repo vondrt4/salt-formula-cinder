@@ -21,6 +21,7 @@ cinder-volume to role volume.
         cinder_uid: 304
         cinder_gid: 304
         default_volume_type: 7k2SaS
+        enable_force_upload: true
         availability_zone_fallback: True
         database:
           engine: mysql
@@ -55,7 +56,7 @@ cinder-volume to role volume.
             multihost: true
             multipath: true
             pool: SAS7K2
-        audit: 
+        audit:
           enabled: false
         osapi_max_limit: 500
 
@@ -66,6 +67,7 @@ cinder-volume to role volume.
         cinder_uid: 304
         cinder_gid: 304
         default_volume_type: 7k2SaS
+        nable_force_upload: true
         database:
           engine: mysql
           host: 127.0.0.1
@@ -430,7 +432,7 @@ Cinder setup with IBM GPFS filesystem
             type_name: GPFS-SILVER
             engine: gpfs
             mount_point: '/mnt/gpfs-openstack/cinder/silver'
-  
+
 Cinder setup with HP LeftHand
 
 .. code-block:: yaml
@@ -452,7 +454,7 @@ Extra parameters for HP LeftHand
 
 .. code-block:: yaml
 
-    cinder type-key normal-storage set hplh:data_pl=r-10-2 hplh:provisioning=full 
+    cinder type-key normal-storage set hplh:data_pl=r-10-2 hplh:provisioning=full
 
 Cinder setup with Solidfire
 
@@ -517,7 +519,7 @@ Enable cinder-backup service for ceph
           ceph_user: cinder
           ceph_chunk_size: 134217728
           restore_discard_excess_bytes: false
-          
+
 Enable auditing filter, ie: CADF
 
 .. code-block:: yaml
