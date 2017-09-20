@@ -18,6 +18,17 @@ server:
         summary: "Endpoint check for '{{ $labels.service }}' is down"
         description: >-
             Endpoint check for '{{ $labels.service }}' is down for 2 minutes
+    CinderAPIServiceDown:
+      if: >-
+        http_response_status{service=~"cinder-api"} == 0
+      for: 2m
+      labels:
+        severity: down
+        service: "{{ $labels.service }}"
+      annotations:
+        summary: "HTTP check for '{{ $labels.service }}' down"
+        description: >-
+            The HTTP check for '{{ $labels.service }}' is down on {{ $labels.host }} for 2 minutes.
     CinderSomeServicesDown:
       if: >-
           openstack_cinder_services{state="down",service=~"cinder-volume|cinder-scheduler"} > 0 and ignoring (state) openstack_cinder_services{state="up",service=~"cinder-volume|cinder-scheduler"} >= 2
