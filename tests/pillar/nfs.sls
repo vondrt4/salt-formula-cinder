@@ -10,6 +10,14 @@ cinder:
       user: openstack
       password: pwd
       virtual_host: '/openstack'
+    identity:
+      engine: keystone
+      host: 127.0.0.1
+      port: 35357
+      tenant: service
+      user: cinder
+      password: pwd
+      region: regionOne
     backend:
       nfs-driver:
         engine: nfs

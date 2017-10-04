@@ -125,6 +125,17 @@ cinder_syncdb:
 
 {%- if not grains.get('noservices', False) %}
 
+{%- set identity = controller.identity %}
+{%- set credentials = {'host': identity.host,
+                       'user': identity.user,
+                       'password': identity.password,
+                       'project_id': identity.tenant,
+                       'port': identity.get('port', 35357),
+                       'protocol': identity.get('protocol', 'http'),
+                       'region_name': identity.get('region_name', 'RegionOne'),
+                       'endpoint_type': identity.get('endpoint_type', 'internalURL'),
+                       'certificate': identity.get('certificate', 'None')} %}
+
 {%- for backend_name, backend in controller.get('backend', {}).iteritems() %}
 
 {%- if backend.engine is defined and backend.engine == 'nfs' or (backend.engine == 'netapp' and backend.storage_protocol == 'nfs') %}
@@ -154,20 +165,20 @@ cinder_netapp_add_packages:
 {%- endif %}
 
 cinder_type_create_{{ backend_name }}:
-  cmd.run:
-  - name: "source /root/keystonerc; cinder type-create {{ backend.type_name }}"
-  - unless: "source /root/keystonerc; cinder type-list | grep {{ backend.type_name }}"
-  - shell: /bin/bash
+  cinderng.volume_type_present:
+  - name: {{ backend.type_name }}
+  - profile: {{ credentials }}
   - require:
     - service: cinder_controller_services
 
 cinder_type_update_{{ backend_name }}:
-  cmd.run:
-  - name: "source /root/keystonerc; cinder type-key {{ backend.type_name }} set volume_backend_name={{ backend_name }}"
-  - unless: "source /root/keystonerc; cinder extra-specs-list | grep \"{u'volume_backend_name': u'{{ backend_name }}'}\""
-  - shell: /bin/bash
+  cinderng.volume_type_key_present:
+  - name: {{ backend.type_name }}
+  - key: volume_backend_name
+  - value: {{ backend_name }}
+  - profile: {{ credentials }}
   - require:
-    - cmd: cinder_type_create_{{ backend_name }}
+    - cinderng: cinder_type_create_{{ backend_name }}
 
 {%- endfor %}
 
