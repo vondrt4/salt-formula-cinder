@@ -114,4 +114,9 @@ suites:
       pillars-from-files:
         cinder.sls: tests/pillar/vsp_single.sls
 
+  - name: volume_single_barbican
+    provisioner:
+      pillars-from-files:
+        cinder.sls: tests/pillar/volume_single_barbican.sls
+
 # vim: ft=yaml sw=2 ts=2 sts=2 tw=125
