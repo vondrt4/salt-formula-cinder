@@ -179,8 +179,12 @@ memcached_servers={%- for member in controller.cache.members %}{{ member.host }}
 {%- endif %}
 auth_version = v3
 
+{%- if controller.get('barbican', {}).get('enabled', False) %}
+[key_manager]
+api_class = castellan.key_manager.barbican_key_manager.BarbicanKeyManager
 [barbican]
-auth_endpoint=http://{{ controller.identity.host }}:5000
+auth_endpoint = {{ controller.identity.get('protocol', 'http') }}://{{ controller.identity.get('host', 'localhost') }}:{{ controller.identity.get('port', '5000') }}/v3
+{%- endif %}
 
 [database]
 idle_timeout=3600

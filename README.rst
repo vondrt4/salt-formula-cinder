@@ -62,6 +62,8 @@ cinder-volume to role volume.
         audit:
           enabled: false
         osapi_max_limit: 500
+        barbican:
+          enabled: true
 
     cinder:
       volume:
@@ -109,6 +111,8 @@ cinder-volume to role volume.
             pool: SAS7K2
         audit:
           enabled: false
+        barbican:
+          enabled: true
 
 
 Enable CORS parameters
@@ -671,6 +675,14 @@ Client role
             key:
               conn_speed: fibre-10G
 
+Enable Barbican integration
+
+.. code-block:: yaml
+
+    cinder:
+      controller:
+        barbican:
+          enabled: true
 
 Documentation and Bugs
 ============================

@@ -37,6 +37,8 @@ env:
     - PLATFORM=trevorj/salty-whales:xenial OS_VERSION=ocata SUITE=volume_single
     - PLATFORM=trevorj/salty-whales:trusty OS_VERSION=mitaka SUITE=vsp_single
     - PLATFORM=trevorj/salty-whales:xenial OS_VERSION=ocata SUITE=vsp_single
+    - PLATFORM=trevorj/salty-whales:trusty OS_VERSION=mitaka SUITE=volume_single_barbican
+    - PLATFORM=trevorj/salty-whales:xenial OS_VERSION=ocata SUITE=volume_single_barbican
 
 before_script:
   - set -o pipefail
