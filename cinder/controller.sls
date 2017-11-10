@@ -46,7 +46,7 @@ rule_{{ name }}_absent:
 
 {%- endfor %}
 
-{%- if controller.version == 'ocata' %}
+{%- if controller.version in ('ocata','pike') %}
 
 /etc/apache2/conf-available/cinder-wsgi.conf:
   file.managed:
