@@ -23,7 +23,7 @@ cinder_volume_packages:
 {%- if not pillar.cinder.get('controller', {}).get('enabled', False) %}
 
 {%- if volume.message_queue.get('ssl',{}).get('enabled', False) %}
-rabbitmq_ca:
+rabbitmq_ca_cinder_volume:
 {%- if volume.message_queue.ssl.cacert is defined %}
   file.managed:
     - name: {{ volume.message_queue.ssl.cacert_file }}
@@ -79,7 +79,7 @@ cinder_backup_services:
   {%- endif %}
   - watch:
     {%- if volume.message_queue.get('ssl',{}).get('enabled', False) %}
-    - file: rabbitmq_ca
+    - file: rabbitmq_ca_cinder_volume
     {%- endif %}
     {%- if volume.database.get('ssl',{}).get('enabled', False) %}
     - file: mysql_ca_cinder_volume
@@ -100,7 +100,7 @@ cinder_volume_services:
   {%- endif %}
   - watch:
     {%- if volume.message_queue.get('ssl',{}).get('enabled', False) %}
-    - file: rabbitmq_ca
+    - file: rabbitmq_ca_cinder_volume
     {%- endif %}
     {%- if volume.database.get('ssl',{}).get('enabled', False) %}
     - file: mysql_ca_cinder_volume

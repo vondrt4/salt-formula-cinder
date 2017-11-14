@@ -64,7 +64,7 @@ cinder_api_service:
   {%- endif %}
   - watch:
     {%- if controller.message_queue.get('ssl',{}).get('enabled', False) %}
-    - file: rabbitmq_ca
+    - file: rabbitmq_ca_cinder_controller
     {%- endif %}
     {%- if controller.database.get('ssl',{}).get('enabled', False) %}
     - file: mysql_ca_cinder_controller
@@ -84,7 +84,7 @@ cinder_api_service:
   {%- endif %}
   - watch:
     {%- if controller.message_queue.get('ssl',{}).get('enabled', False) %}
-    - file: rabbitmq_ca
+    - file: rabbitmq_ca_cinder_controller
     {%- endif %}
     {%- if controller.database.get('ssl',{}).get('enabled', False) %}
     - file: mysql_ca_cinder_controller
@@ -115,7 +115,7 @@ cinder_controller_services:
   {%- endif %}
   - watch:
     {%- if controller.message_queue.get('ssl',{}).get('enabled', False) %}
-    - file: rabbitmq_ca
+    - file: rabbitmq_ca_cinder_controller
     {%- endif %}
     {%- if controller.database.get('ssl',{}).get('enabled', False) %}
     - file: mysql_ca_cinder_controller
@@ -205,7 +205,7 @@ cinder_backup_services:
   - enable: true
   - watch:
     {%- if controller.message_queue.get('ssl',{}).get('enabled', False) %}
-    - file: rabbitmq_ca
+    - file: rabbitmq_ca_cinder_controller
     {%- endif %}
     - file: /etc/cinder/cinder.conf
     - file: /etc/cinder/api-paste.ini
@@ -213,7 +213,7 @@ cinder_backup_services:
 {%- endif %}
 
 {%- if controller.message_queue.get('ssl',{}).get('enabled', False) %}
-rabbitmq_ca:
+rabbitmq_ca_cinder_controller:
 {%- if controller.message_queue.ssl.cacert is defined %}
   file.managed:
     - name: {{ controller.message_queue.ssl.cacert_file }}
