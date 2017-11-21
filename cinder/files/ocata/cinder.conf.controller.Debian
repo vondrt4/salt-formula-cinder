@@ -29,7 +29,11 @@ allow_availability_zone_fallback = {{ controller.get('availability_zone_fallback
 
 osapi_volume_listen={{ controller.osapi.host }}
 
-glance_api_servers = http://{{ controller.glance.host }}:{{ controller.glance.port }}
+glance_api_servers = {{ controller.glance.get('protocol','http') }}://{{ controller.glance.host }}:{{ controller.glance.port }}
+{%- if controller.glance.get('protocol','http') == 'https' %}
+glance_ca_certificates_file = {{ controller.glance.get('cacert_file', controller.cacert_file) }}
+{%- endif %}
+
 
 glance_host={{ controller.glance.host }}
 glance_port={{ controller.glance.port }}
@@ -40,7 +44,7 @@ enable_v3_api = True
 os_privileged_user_name={{ controller.identity.user }}
 os_privileged_user_password={{ controller.identity.password }}
 os_privileged_user_tenant={{ controller.identity.tenant }}
-os_privileged_user_auth_url=http://{{ controller.identity.host }}:5000/v3/
+os_privileged_user_auth_url={{ controller.identity.get('protocol','http') }}://{{ controller.identity.host }}:5000/v3/
 
 volume_backend_name=DEFAULT
 
@@ -165,8 +169,12 @@ project_name = {{ controller.identity.tenant }}
 username = {{ controller.identity.user }}
 password = {{ controller.identity.password }}
 
-auth_uri=http://{{ controller.identity.host }}:5000
-auth_url=http://{{ controller.identity.host }}:35357
+auth_uri={{ controller.identity.get('protocol', 'http') }}://{{ controller.identity.host }}:5000
+auth_url={{ controller.identity.get('protocol', 'http') }}://{{ controller.identity.host }}:35357
+{%- if controller.identity.get('protocol', 'http') == 'https' %}
+cafile={{ controller.identity.get('cacert_file', controller.cacert_file) }}
+{%- endif %}
+
 # Temporary disabled for backward compataiblity
 #auth_uri=http://{{ controller.identity.host }}/identity
 #auth_url=http://{{ controller.identity.host }}/identity_v2_admin
@@ -178,8 +186,12 @@ auth_version = v3
 {%- if controller.get('barbican', {}).get('enabled', False) %}
 [key_manager]
 api_class = castellan.key_manager.barbican_key_manager.BarbicanKeyManager
+
 [barbican]
 auth_endpoint = {{ controller.identity.get('protocol', 'http') }}://{{ controller.identity.get('host', 'localhost') }}:{{ controller.identity.get('port', '5000') }}/v3
+{%- if controller.barbican.get('protocol', 'http') == 'https' %}
+cafile={{ controller.barbican.get('cacert_file', controller.cacerts_file) }}
+{%- endif %}
 {%- endif %}
 
 [database]

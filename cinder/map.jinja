@@ -82,13 +82,14 @@
 }, merge=pillar.cinder.get('volume', {}), base='BaseDefaults') %}
 
 {% set client = salt['grains.filter_by']({
+    'BaseDefaults': default_params,
     'Debian': {
         'pkgs': ['python-cinderclient']
     },
     'RedHat': {
         'pkgs': ['python-cinderclient']
     },
-}, merge=pillar.cinder.get('client', {})) %}
+}, merge=pillar.cinder.get('client', {}), base='BaseDefaults') %}
 
 {% set monitoring = salt['grains.filter_by']({
     'default': {

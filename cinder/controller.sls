@@ -143,7 +143,7 @@ cinder_syncdb:
                        'protocol': identity.get('protocol', 'http'),
                        'region_name': identity.get('region_name', 'RegionOne'),
                        'endpoint_type': identity.get('endpoint_type', 'internalURL'),
-                       'certificate': identity.get('certificate', 'None')} %}
+                       'certificate': identity.get('certificate', controller.cacert_file)} %}
 
 {%- for backend_name, backend in controller.get('backend', {}).iteritems() %}
 
