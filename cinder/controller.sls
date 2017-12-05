@@ -22,6 +22,97 @@ cinder_controller_packages:
   - require:
     - pkg: cinder_controller_packages
 
+{%- if controller.backup.engine != None %}
+  {%- set cinder_log_services = controller.services + controller.backup.services %}
+{%- else %}
+  {%- set cinder_log_services = controller.services %}
+{%- endif %}
+
+{%- for service_name in cinder_log_services %}
+{{ service_name }}_default:
+  file.managed:
+    - name: /etc/default/{{ service_name }}
+    - source: salt://cinder/files/default
+    - template: jinja
+    - defaults:
+        service_name: {{ service_name }}
+        values: {{ controller }}
+    - require:
+      - pkg: cinder_controller_packages
+{%- if controller.backup.engine != None %}
+      - pkg: cinder_backup_packages
+{%- endif %}
+    - watch_in:
+      - service: cinder_controller_services
+{%- if controller.backup.engine != None %}
+      - pkg: cinder_backup_services
+{%- endif %}
+{%- endfor %}
+
+{% if controller.logging.log_appender %}
+
+{%- if controller.logging.log_handlers.get('fluentd', {}).get('enabled', False) %}
+cinder_controller_fluentd_logger_package:
+  pkg.installed:
+    - name: python-fluent-logger
+{%- endif %}
+
+cinder_general_logging_conf:
+  file.managed:
+    - name: /etc/cinder/logging.conf
+    - source: salt://cinder/files/logging.conf
+    - template: jinja
+    - user: cinder
+    - group: cinder
+    - defaults:
+        service_name: cinder
+        values: {{ controller }}
+    - require:
+      - pkg: cinder_controller_packages
+{%- if controller.logging.log_handlers.get('fluentd', {}).get('enabled', False) %}
+      - pkg: cinder_controller_fluentd_logger_package
+{%- endif %}
+    - watch_in:
+      - service: cinder_controller_services
+      - service: cinder_api_service
+
+/var/log/cinder/cinder.log:
+  file.managed:
+    - user: cinder
+    - group: cinder
+    - watch_in:
+      - service: cinder_controller_services
+      - service: cinder_api_service
+
+{% for service_name in cinder_log_services %}
+{{ service_name }}_logging_conf:
+  file.managed:
+    - name: /etc/cinder/logging/logging-{{ service_name }}.conf
+    - source: salt://cinder/files/logging.conf
+    - template: jinja
+    - makedirs: True
+    - user: cinder
+    - group: cinder
+    - defaults:
+        service_name: {{ service_name }}
+        values: {{ controller }}
+    - require:
+      - pkg: cinder_controller_packages
+{%- if controller.logging.log_handlers.get('fluentd', {}).get('enabled', False) %}
+      - pkg: cinder_controller_fluentd_logger_package
+{%- endif %}
+{%- if controller.backup.engine != None %}
+      - pkg: cinder_backup_packages
+{%- endif %}
+    - watch_in:
+      - service: cinder_controller_services
+{%- if controller.backup.engine != None %}
+      - pkg: cinder_backup_services
+{%- endif %}
+{% endfor %}
+
+{% endif %}
+
 {%- for name, rule in controller.get('policy', {}).iteritems() %}
 
 {%- if rule != None %}

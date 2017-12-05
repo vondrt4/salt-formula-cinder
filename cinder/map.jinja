@@ -22,7 +22,15 @@
           'pkgs': ['cinder-backup'],
           'services': ['cinder-backup'],
           'engine': None
-        }
+        },
+        'logging': {
+          'log_appender': false,
+          'log_handlers': {
+            'watchedfile': {
+              'enabled': true
+            }
+          },
+        },
     },
     'RedHat': {
         'pkgs': ['openstack-cinder', 'python-cinder', 'lvm2', 'python-pycadf'],
@@ -39,8 +47,15 @@
           'pkgs': ['cinder-backup'],
           'services': ['cinder-backup'],
           'engine': None
-        }
-
+        },
+        'logging': {
+          'log_appender': false,
+          'log_handlers': {
+            'watchedfile': {
+              'enabled': true
+            }
+          },
+        },
     },
 }, merge=pillar.cinder.get('controller', {}), base='BaseDefaults') %}
 
@@ -60,8 +75,15 @@
           'pkgs': ['cinder-backup'],
           'services': ['cinder-backup'],
           'engine': None
-        }
-
+        },
+        'logging': {
+          'log_appender': false,
+          'log_handlers': {
+            'watchedfile': {
+              'enabled': true
+            }
+          },
+        },
     },
     'RedHat': {
         'pkgs': ['openstack-cinder', 'python-cinder', 'lvm2', 'sysfsutils', 'sg3_utils', 'device-mapper-multipath', 'device-mapper-multipath-libs', 'python-pycadf'],
@@ -77,7 +99,15 @@
           'pkgs': ['cinder-backup'],
           'services': ['cinder-backup'],
           'engine': None
-        }
+        },
+        'logging': {
+          'log_appender': false,
+          'log_handlers': {
+            'watchedfile': {
+              'enabled': true
+            }
+          },
+        },
     },
 }, merge=pillar.cinder.get('volume', {}), base='BaseDefaults') %}
 
