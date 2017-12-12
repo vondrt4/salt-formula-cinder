@@ -1,4 +1,4 @@
-{%- from "cinder/map.jinja" import controller, system_cacerts_file with context %}
+{%- from "cinder/map.jinja" import controller with context %}
 {%- if controller.get('enabled', False) %}
 
 {%- set user = controller %}
@@ -222,7 +222,7 @@ rabbitmq_ca_cinder_controller:
     - makedirs: true
 {%- else %}
   file.exists:
-   - name: {{ controller.message_queue.ssl.get('cacert_file', system_cacerts_file) }}
+   - name: {{ controller.message_queue.ssl.get('cacert_file', controller.cacert_file) }}
 {%- endif %}
 {%- endif %}
 
@@ -237,7 +237,7 @@ mysql_ca_cinder_controller:
 
 {%- else %}
   file.exists:
-   - name: {{ controller.database.ssl.get('cacert_file', system_cacerts_file) }}
+   - name: {{ controller.database.ssl.get('cacert_file', controller.cacert_file) }}
 {%- endif %}
 {%- endif %}
 
