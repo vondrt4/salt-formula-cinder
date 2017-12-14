@@ -28,7 +28,11 @@ os_region_name={{ volume.identity.region }}
 
 osapi_volume_listen={{ volume.osapi.host }}
 
-glance_api_servers = http://{{ volume.glance.host }}:{{ volume.glance.port }}
+glance_api_servers = {{ volume.glance.get('protocol','http') }}://{{ volume.glance.host }}:{{ volume.glance.port }}
+{%- if volume.glance.get('protocol','http') == 'https' %}
+glance_ca_certificates_file = {{ volume.glance.get('cacert_file', volume.cacert_file) }}
+{%- endif %}
+
 
 glance_host={{ volume.glance.host }}
 glance_port={{ volume.glance.port }}
@@ -37,7 +41,7 @@ glance_api_version=2
 os_privileged_user_name={{ volume.identity.user }}
 os_privileged_user_password={{ volume.identity.password }}
 os_privileged_user_tenant={{ volume.identity.tenant }}
-os_privileged_user_auth_url=http://{{ volume.identity.host }}:5000/v3/
+os_privileged_user_auth_url={{ volume.identity.get('protocol','http') }}://{{ volume.identity.host }}:5000/v3/
 
 volume_backend_name=DEFAULT
 
@@ -156,9 +160,12 @@ project_domain_name = {{ volume.identity.get('domain', 'Default') }}
 project_name = {{ volume.identity.tenant }}
 username = {{ volume.identity.user }}
 password = {{ volume.identity.password }}
+auth_uri={{ volume.identity.get('protocol', 'http') }}://{{ volume.identity.host }}:5000
+auth_url={{ volume.identity.get('protocol', 'http') }}://{{ volume.identity.host }}:35357
+{%- if volume.identity.get('protocol', 'http') == 'https' %}
+cafile={{ volume.identity.get('cacert_file', volume.cacert_file) }}
+{%- endif %}
 
-auth_uri=http://{{ volume.identity.host }}:5000/v3
-auth_url=http://{{ volume.identity.host }}:35357/v3
 # Temporary disabled for backward compataiblity
 #auth_uri=http://{{ volume.identity.host }}/identity
 #auth_url=http://{{ volume.identity.host }}/identity_v2_admin
@@ -172,6 +179,9 @@ auth_version = v3
 api_class = castellan.key_manager.barbican_key_manager.BarbicanKeyManager
 [barbican]
 auth_endpoint = {{ volume.identity.get('protocol', 'http') }}://{{ volume.identity.get('host', 'localhost') }}:{{ volume.identity.get('port', '5000') }}/v3
+{%- if volume.barbican.get('protocol', 'https') %}
+cafile={{ volume.identity.get('cacert_file', volume.cacert_file) }}
+{%- endif %}
 {%- endif %}
 
 [database]
