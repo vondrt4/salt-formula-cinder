@@ -1,9 +1,12 @@
-{%- set system_cacerts_file = salt['grains.filter_by']({
-    'Debian': '/etc/ssl/certs/ca-certificates.crt',
-    'RedHat': '/etc/pki/tls/certs/ca-bundle.crt'
-})%}
+{%- set default_params = {
+    'cacert_file': salt['grains.filter_by']({
+        'Debian': '/etc/ssl/certs/ca-certificates.crt',
+        'RedHat': '/etc/pki/tls/certs/ca-bundle.crt'
+    })}
+%}
 
 {% set controller = salt['grains.filter_by']({
+    'BaseDefaults': default_params,
     'Debian': {
         'pkgs': ['cinder-api', 'cinder-scheduler', 'lvm2', 'python-cinder', 'gettext-base', 'python-memcache', 'python-pycadf'],
         'services': ['cinder-scheduler'],
@@ -13,8 +16,8 @@
         'audit': {
           'enabled': false
         },
-	'cinder_uid': 304,
-	'cinder_gid': 304,
+    'cinder_uid': 304,
+    'cinder_gid': 304,
         'backup': {
           'pkgs': ['cinder-backup'],
           'services': ['cinder-backup'],
@@ -30,8 +33,8 @@
         'audit': {
           'enabled': false
         },
-	'cinder_uid': 304,
-	'cinder_gid': 304,
+    'cinder_uid': 304,
+    'cinder_gid': 304,
         'backup': {
           'pkgs': ['cinder-backup'],
           'services': ['cinder-backup'],
@@ -39,9 +42,10 @@
         }
 
     },
-}, merge=pillar.cinder.get('controller', {})) %}
+}, merge=pillar.cinder.get('controller', {}), base='BaseDefaults') %}
 
 {% set volume = salt['grains.filter_by']({
+    'BaseDefaults': default_params,
     'Debian': {
         'pkgs': ['cinder-volume', 'lvm2', 'sysfsutils', 'sg3-utils', 'python-cinder','python-mysqldb','p7zip', 'gettext-base', 'python-memcache', 'python-pycadf'],
         'services': ['cinder-volume'],
@@ -50,8 +54,8 @@
         'audit': {
           'enabled': false
         },
-	'cinder_uid': 304,
-	'cinder_gid': 304,
+    'cinder_uid': 304,
+    'cinder_gid': 304,
         'backup': {
           'pkgs': ['cinder-backup'],
           'services': ['cinder-backup'],
@@ -67,15 +71,15 @@
         'audit': {
           'enabled': false
         },
-	'cinder_uid': 304,
-	'cinder_gid': 304,
+    'cinder_uid': 304,
+    'cinder_gid': 304,
         'backup': {
           'pkgs': ['cinder-backup'],
           'services': ['cinder-backup'],
           'engine': None
         }
     },
-}, merge=pillar.cinder.get('volume', {})) %}
+}, merge=pillar.cinder.get('volume', {}), base='BaseDefaults') %}
 
 {% set client = salt['grains.filter_by']({
     'Debian': {

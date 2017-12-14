@@ -1,4 +1,4 @@
-{%- from "cinder/map.jinja" import volume, system_cacerts_file with context %}
+{%- from "cinder/map.jinja" import volume with context %}
 
 [DEFAULT]
 rootwrap_config = /etc/cinder/rootwrap.conf
@@ -131,11 +131,7 @@ kombu_ssl_version = {{ volume.message_queue.ssl.version }}
 kombu_ssl_version = TLSv1_2
 {%- endif %}
 
-{%- if volume.message_queue.ssl.cacert_file is defined %}
-kombu_ssl_ca_certs = {{ volume.message_queue.ssl.cacert_file }}
-{%- else %}
-kombu_ssl_ca_certs={{ system_cacerts_file }}
-{%- endif %}
+kombu_ssl_ca_certs = {{ volume.message_queue.ssl.get('cacert_file', volume.cacert_file) }}
 {%- endif %}
 
 rabbit_userid = {{ volume.message_queue.user }}
@@ -163,7 +159,7 @@ idle_timeout=3600
 max_pool_size=30
 max_retries=-1
 max_overflow=40
-connection = {{ volume.database.engine }}+pymysql://{{ volume.database.user }}:{{ volume.database.password }}@{{ volume.database.host }}/{{ volume.database.name }}?charset=utf8{%- if volume.database.get('ssl',{}).get('enabled',False) %}&ssl_ca={{ volume.database.ssl.get('cacert_file', system_cacerts_file) }}{% endif %}
+connection = {{ volume.database.engine }}+pymysql://{{ volume.database.user }}:{{ volume.database.password }}@{{ volume.database.host }}/{{ volume.database.name }}?charset=utf8{%- if volume.database.get('ssl',{}).get('enabled',False) %}&ssl_ca={{ volume.database.ssl.get('cacert_file', volume.cacert_file) }}{% endif %}
 
 {%- if volume.backend is defined %}
 

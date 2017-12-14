@@ -1,4 +1,4 @@
-{%- from "cinder/map.jinja" import controller, system_cacerts_file with context %}
+{%- from "cinder/map.jinja" import controller with context %}
 
 [DEFAULT]
 rootwrap_config = /etc/cinder/rootwrap.conf
@@ -155,11 +155,7 @@ kombu_ssl_version = {{ controller.message_queue.ssl.version }}
 kombu_ssl_version = TLSv1_2
 {%- endif %}
 
-{%- if controller.message_queue.ssl.cacert_file is defined %}
-kombu_ssl_ca_certs = {{ controller.message_queue.ssl.cacert_file }}
-{%- else %}
-kombu_ssl_ca_certs={{ system_cacerts_file }}
-{%- endif %}
+kombu_ssl_ca_certs = {{ controller.message_queue.ssl.get('cacert_file', controller.cacert_file) }}
 {%- endif %}
 
 
@@ -195,7 +191,7 @@ idle_timeout=3600
 max_pool_size=30
 max_retries=-1
 max_overflow=40
-connection = {{ controller.database.engine }}+pymysql://{{ controller.database.user }}:{{ controller.database.password }}@{{ controller.database.host }}/{{ controller.database.name }}?charset=utf8{%- if controller.database.get('ssl',{}).get('enabled',False) %}&ssl_ca={{ controller.database.ssl.get('cacert_file', system_cacerts_file) }}{% endif %}
+connection = {{ controller.database.engine }}+pymysql://{{ controller.database.user }}:{{ controller.database.password }}@{{ controller.database.host }}/{{ controller.database.name }}?charset=utf8{%- if controller.database.get('ssl',{}).get('enabled',False) %}&ssl_ca={{ controller.database.ssl.get('cacert_file', controller.cacert_file) }}{% endif %}
 
 {%- if controller.backend is defined %}
 

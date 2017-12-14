@@ -1,4 +1,4 @@
-{%- from "cinder/map.jinja" import volume, system_cacerts_file with context %}
+{%- from "cinder/map.jinja" import volume with context %}
 {%- if volume.enabled %}
 
 {%- if not pillar.cinder.get('controller', {}).get('enabled', False) %}
@@ -32,7 +32,7 @@ rabbitmq_ca_cinder_volume:
     - makedirs: true
 {%- else %}
   file.exists:
-   - name: {{ volume.message_queue.ssl.get('cacert_file', system_cacerts_file) }}
+   - name: {{ volume.message_queue.ssl.get('cacert_file', volume.cacert_file) }}
 {%- endif %}
 {%- endif %}
 
@@ -46,7 +46,7 @@ mysql_ca_cinder_volume:
     - makedirs: true
 {%- else %}
   file.exists:
-   - name: {{ volume.database.ssl.get('cacert_file', system_cacerts_file) }}
+   - name: {{ volume.database.ssl.get('cacert_file', volume.cacert_file) }}
 {%- endif %}
 {%- endif %}
 
