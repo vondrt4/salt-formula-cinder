@@ -20,8 +20,6 @@ cinder_volume_packages:
   - require_in:
     - service: cinder_volume_services
 
-{%- if not pillar.cinder.get('controller', {}).get('enabled', False) %}
-
 {%- if volume.message_queue.get('ssl',{}).get('enabled', False) %}
 rabbitmq_ca_cinder_volume:
 {%- if volume.message_queue.ssl.cacert is defined %}
@@ -49,6 +47,8 @@ mysql_ca_cinder_volume:
    - name: {{ volume.database.ssl.get('cacert_file', volume.cacert_file) }}
 {%- endif %}
 {%- endif %}
+
+{%- if not pillar.cinder.get('controller', {}).get('enabled', False) %}
 
 /etc/cinder/cinder.conf:
   file.managed:
