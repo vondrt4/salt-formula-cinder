@@ -46,6 +46,17 @@ rule_{{ name }}_absent:
 
 {%- endfor %}
 
+cinder_syncdb:
+  cmd.run:
+  - name: 'cinder-manage db sync; sleep 5;'
+  {%- if grains.get('noservices') %}
+  - onlyif: /bin/false
+  {%- endif %}
+  - require:
+    - pkg: cinder_controller_packages
+  - require_in:
+    - service: cinder_controller_services
+
 {%- if controller.version in ('ocata','pike') %}
 
 /etc/apache2/conf-available/cinder-wsgi.conf:
@@ -62,6 +73,8 @@ cinder_api_service:
   {%- if grains.get('noservices') %}
   - onlyif: /bin/false
   {%- endif %}
+  - require:
+    - pkg: cinder_controller_packages
   - watch:
     {%- if controller.message_queue.get('ssl',{}).get('enabled', False) %}
     - file: rabbitmq_ca_cinder_controller
@@ -82,6 +95,8 @@ cinder_api_service:
   {%- if grains.get('noservices') %}
   - onlyif: /bin/false
   {%- endif %}
+  - require:
+    - pkg: cinder_controller_packages
   - watch:
     {%- if controller.message_queue.get('ssl',{}).get('enabled', False) %}
     - file: rabbitmq_ca_cinder_controller
@@ -113,6 +128,8 @@ cinder_controller_services:
   {%- if grains.get('noservices') %}
   - onlyif: /bin/false
   {%- endif %}
+  - require:
+    - pkg: cinder_controller_packages
   - watch:
     {%- if controller.message_queue.get('ssl',{}).get('enabled', False) %}
     - file: rabbitmq_ca_cinder_controller
@@ -122,15 +139,6 @@ cinder_controller_services:
     {%- endif %}
     - file: /etc/cinder/cinder.conf
     - file: /etc/cinder/api-paste.ini
-
-cinder_syncdb:
-  cmd.run:
-  - name: 'cinder-manage db sync; sleep 5;'
-  {%- if grains.get('noservices') %}
-  - onlyif: /bin/false
-  {%- endif %}
-  - require:
-    - service: cinder_controller_services
 
 {%- if not grains.get('noservices', False) %}
 
