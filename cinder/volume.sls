@@ -65,6 +65,70 @@ mysql_ca_cinder_volume:
     - pkg: cinder_volume_packages
 
 {%- if volume.backup.engine != None %}
+  {%- set cinder_log_services = volume.services + volume.backup.services %}
+{%- else %}
+  {%- set cinder_log_services = volume.services %}
+{%- endif %}
+
+{% for service_name in cinder_log_services %}
+{{ service_name }}_default:
+  file.managed:
+    - name: /etc/default/{{ service_name }}
+    - source: salt://cinder/files/default
+    - template: jinja
+    - defaults:
+        service_name: {{ service_name }}
+        values: {{ volume }}
+    - require:
+      - pkg: cinder_volume_packages
+{%- if volume.backup.engine != None %}
+      - pkg: cinder_backup_packages
+{%- endif %}
+    - watch_in:
+      - service: cinder_volume_services
+{%- if volume.backup.engine != None %}
+      - pkg: cinder_backup_services
+{%- endif %}
+{% endfor %}
+
+{% if volume.logging.log_appender %}
+
+{%- if volume.logging.log_handlers.get('fluentd', {}).get('enabled', False) %}
+cinder_volume_fluentd_logger_package:
+  pkg.installed:
+    - name: python-fluent-logger
+{%- endif %}
+
+{% for service_name in cinder_log_services %}
+{{ service_name }}_logging_conf:
+  file.managed:
+    - name: /etc/cinder/logging/logging-{{ service_name }}.conf
+    - source: salt://cinder/files/logging.conf
+    - template: jinja
+    - makedirs: True
+    - user: cinder
+    - group: cinder
+    - defaults:
+        service_name: {{ service_name }}
+        values: {{ volume }}
+    - require:
+      - pkg: cinder_volume_packages
+{%- if volume.logging.log_handlers.get('fluentd', {}).get('enabled', False) %}
+      - pkg: cinder_volume_fluentd_logger_package
+{%- endif %}
+{%- if controller.backup.engine != None %}
+      - pkg: cinder_backup_packages
+{%- endif %}
+    - watch_in:
+      - service: cinder_volume_services
+{%- if controller.backup.engine != None %}
+      - pkg: cinder_backup_services
+{%- endif %}
+{% endfor %}
+
+{% endif %}
+
+{%- if volume.backup.engine != None %}
 
 cinder_backup_packages:
   pkg.installed:
