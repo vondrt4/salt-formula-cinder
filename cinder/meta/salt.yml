@@ -8,4 +8,9 @@ orchestrate:
     priority: 550
     require:
     - salt: cinder.controller
-
+dependency:
+  {% from "cinder/map.jinja" import client with context %}
+  {%- if client.get('enabled', False) %}
+  engine: pkg
+  pkgs: {{ client.pkgs }}
+  {%- endif %}
