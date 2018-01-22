@@ -1,8 +1,15 @@
 dashboard:
+{%- if pillar.get('fluentd', {}).get('agent', {}).get('enabled', False) %}
+  cinder_prometheus:
+    datasource: prometheus
+    format: json
+    template: cinder/files/grafana_dashboards/cinder_prometheus_fluentd.json
+{%- else %}
   cinder_prometheus:
     datasource: prometheus
     format: json
     template: cinder/files/grafana_dashboards/cinder_prometheus.json
+{%- endif %}
   cinder_influxdb:
     datasource: influxdb
     format: json
