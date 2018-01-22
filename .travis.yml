@@ -17,6 +17,28 @@ install:
   - bundle install
 
 env:
+    - PLATFORM=trevorj/salty-whales:trusty-2017.7 OS_VERSION=mitaka SUITE=ceph-single
+    - PLATFORM=trevorj/salty-whales:xenial-2017.7 OS_VERSION=ocata SUITE=ceph-single
+    - PLATFORM=trevorj/salty-whales:trusty-2017.7 OS_VERSION=mitaka SUITE=control-cluster
+    - PLATFORM=trevorj/salty-whales:xenial-2017.7 OS_VERSION=ocata SUITE=control-cluster
+    - PLATFORM=trevorj/salty-whales:trusty-2017.7 OS_VERSION=mitaka SUITE=control-single
+    - PLATFORM=trevorj/salty-whales:xenial-2017.7 OS_VERSION=ocata SUITE=control-single
+    - PLATFORM=trevorj/salty-whales:trusty-2017.7 OS_VERSION=mitaka SUITE=gpfs-single
+    - PLATFORM=trevorj/salty-whales:xenial-2017.7 OS_VERSION=ocata SUITE=gpfs-single
+    - PLATFORM=trevorj/salty-whales:trusty-2017.7 OS_VERSION=mitaka SUITE=hp3par-single
+    - PLATFORM=trevorj/salty-whales:xenial-2017.7 OS_VERSION=ocata SUITE=hp3par-single
+    - PLATFORM=trevorj/salty-whales:trusty-2017.7 OS_VERSION=mitaka SUITE=lefthand-single
+    - PLATFORM=trevorj/salty-whales:xenial-2017.7 OS_VERSION=ocata SUITE=lefthand-single
+    - PLATFORM=trevorj/salty-whales:trusty-2017.7 OS_VERSION=mitaka SUITE=solidfire-single
+    - PLATFORM=trevorj/salty-whales:xenial-2017.7 OS_VERSION=ocata SUITE=solidfire-single
+    - PLATFORM=trevorj/salty-whales:trusty-2017.7 OS_VERSION=mitaka SUITE=storwize-single
+    - PLATFORM=trevorj/salty-whales:xenial-2017.7 OS_VERSION=ocata SUITE=storwize-single
+    - PLATFORM=trevorj/salty-whales:trusty-2017.7 OS_VERSION=mitaka SUITE=volume-single
+    - PLATFORM=trevorj/salty-whales:xenial-2017.7 OS_VERSION=ocata SUITE=volume-single
+    - PLATFORM=trevorj/salty-whales:trusty-2017.7 OS_VERSION=mitaka SUITE=vsp-single
+    - PLATFORM=trevorj/salty-whales:xenial-2017.7 OS_VERSION=ocata SUITE=vsp-single
+    - PLATFORM=trevorj/salty-whales:trusty-2017.7 OS_VERSION=mitaka SUITE=volume-single-barbican
+    - PLATFORM=trevorj/salty-whales:xenial-2017.7 OS_VERSION=ocata SUITE=volume-single-barbican
     - PLATFORM=trevorj/salty-whales:trusty OS_VERSION=mitaka SUITE=ceph-single
     - PLATFORM=trevorj/salty-whales:xenial OS_VERSION=ocata SUITE=ceph-single
     - PLATFORM=trevorj/salty-whales:trusty OS_VERSION=mitaka SUITE=control-cluster
@@ -37,8 +59,8 @@ env:
     - PLATFORM=trevorj/salty-whales:xenial OS_VERSION=ocata SUITE=volume-single
     - PLATFORM=trevorj/salty-whales:trusty OS_VERSION=mitaka SUITE=vsp-single
     - PLATFORM=trevorj/salty-whales:xenial OS_VERSION=ocata SUITE=vsp-single
-    - PLATFORM=trevorj/salty-whales:trusty OS_VERSION=mitaka SUITE=volume-single-barbican
-    - PLATFORM=trevorj/salty-whales:xenial OS_VERSION=ocata SUITE=volume-single-barbican
+    - PLATFORM=trevorj/salty-whales:trusty-2017.7 OS_VERSION=mitaka SUITE=volume-single-barbican
+    - PLATFORM=trevorj/salty-whales:xenial-2017.7 OS_VERSION=ocata SUITE=volume-single-barbican
 
 before_script:
   - set -o pipefail
