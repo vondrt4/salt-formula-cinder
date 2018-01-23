@@ -9,8 +9,8 @@ orchestrate:
     require:
     - salt: cinder.controller
 dependency:
-  {% from "cinder/map.jinja" import client with context %}
-  {%- if client.get('enabled', False) %}
+  {% from "cinder/map.jinja" import controller, client with context %}
+  {%- if client.get('enabled', False) or controller.get('enabled', False) %}
   engine: pkg
   pkgs: {{ client.pkgs }}
   {%- endif %}
