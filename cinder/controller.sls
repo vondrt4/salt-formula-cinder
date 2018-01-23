@@ -146,6 +146,10 @@ rule_{{ name }}_absent:
   - require:
     - pkg: cinder_controller_packages
 
+apache_enable_cinder_wsgi:
+  apache_conf.enabled:
+    - name: cinder-wsgi
+
 cinder_api_service:
   service.running:
   - name: apache2
