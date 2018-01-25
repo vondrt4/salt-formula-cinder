@@ -39,7 +39,8 @@ def _authng(profile=None):
         ),
         'endpoint_type': profile['endpoint_type'],
         'certificate': profile['certificate'],
-        'region_name': profile['region_name']
+        'region_name': profile['region_name'],
+        'retries': profile.get('retries', 5)
     }
     return credentials
 
@@ -56,7 +57,8 @@ def create_conn(cred=None):
         auth_url=cred['auth_url'],
         endpoint_type=cred['endpoint_type'],
         cacert=cred['certificate'],
-        region_name=cred['region_name']
+        region_name=cred['region_name'],
+        retries=cred['retries']
     )
     return nt
 
