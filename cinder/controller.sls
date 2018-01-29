@@ -28,6 +28,10 @@ cinder_controller_packages:
   {%- set cinder_log_services = controller.services %}
 {%- endif %}
 
+{%- if controller.version not in ('ocata','pike') %}
+  {%- do cinder_log_services.append('cinder-api') %}
+{%- endif %}
+
 {%- for service_name in cinder_log_services %}
 {{ service_name }}_default:
   file.managed:
