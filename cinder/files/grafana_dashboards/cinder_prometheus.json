@@ -2327,7 +2327,7 @@
   "sharedCrosshair": true,
   "style": "dark",
   "tags": [
-    "cinder"
+    "openstack"
   ],
   "templating": {
     "list": [
