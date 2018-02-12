@@ -13,7 +13,7 @@ agent:
             port: 24224
         match:
           route_openstack_cinder:
-            tag: openstack.cinder.**
+            tag: openstack.cinder.*
             type: relabel
             label: openstack_cinder
 {%- if apache_wsgi %}
@@ -69,14 +69,13 @@ agent:
 {%- endif %}
       openstack_cinder:
         filter:
-          set_programname:
+          set_cinder_programname:
             tag: openstack.cinder.*
             type: record_transformer
             enable_ruby: true
             record:
               - name: programname
                 value: cinder-${ tag_parts[2] }
-        filter:
           set_log_record_fields:
             tag: openstack.cinder
             type: record_transformer
