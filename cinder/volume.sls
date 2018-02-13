@@ -116,12 +116,12 @@ cinder_volume_fluentd_logger_package:
 {%- if volume.logging.log_handlers.get('fluentd', {}).get('enabled', False) %}
       - pkg: cinder_volume_fluentd_logger_package
 {%- endif %}
-{%- if controller.backup.engine != None %}
+{%- if volume.backup.engine != None %}
       - pkg: cinder_backup_packages
 {%- endif %}
     - watch_in:
       - service: cinder_volume_services
-{%- if controller.backup.engine != None %}
+{%- if volume.backup.engine != None %}
       - pkg: cinder_backup_services
 {%- endif %}
 {% endfor %}
