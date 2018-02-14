@@ -117,7 +117,7 @@ cinder_general_logging_conf:
 
 {% endif %}
 
-{%- for name, rule in controller.get('policy', {}).iteritems() %}
+{%- for name, rule in controller.get('policy', {}).items() %}
 
 {%- if rule != None %}
 rule_{{ name }}_present:
@@ -252,7 +252,7 @@ cinder_controller_services:
                        'endpoint_type': identity.get('endpoint_type', 'internalURL'),
                        'certificate': identity.get('certificate', controller.cacert_file)} %}
 
-{%- for backend_name, backend in controller.get('backend', {}).iteritems() %}
+{%- for backend_name, backend in controller.get('backend', {}).items() %}
 
 {%- if backend.engine is defined and backend.engine == 'nfs' or (backend.engine == 'netapp' and backend.storage_protocol == 'nfs') %}
 /etc/cinder/nfs_shares_{{ backend_name }}:

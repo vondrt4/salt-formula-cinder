@@ -174,7 +174,7 @@ cinder_volume_services:
 
 {%- if volume.backend is defined %}
 
-{%- for backend_name, backend in volume.get('backend', {}).iteritems() %}
+{%- for backend_name, backend in volume.get('backend', {}).items() %}
 
 {%- if backend.get('engine') == 'nfs' or (backend.get('engine') == 'netapp' and backend.get('storage_protocol') == 'nfs') %}
 /etc/cinder/nfs_shares_{{ backend_name }}_for_cinder_volume:

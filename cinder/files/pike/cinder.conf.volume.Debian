@@ -49,7 +49,7 @@ volume_backend_name=DEFAULT
 
 default_volume_type={{ volume.default_volume_type }}
 
-enabled_backends={% for backend_name, backend in volume.get('backend', {}).iteritems() %}{{ backend_name }}{% if not loop.last %},{% endif %}{% endfor %}
+enabled_backends={% for backend_name, backend in volume.get('backend', {}).items() %}{{ backend_name }}{% if not loop.last %},{% endif %}{% endfor %}
 
 {%- endif %}
 
@@ -193,7 +193,7 @@ connection = {{ volume.database.engine }}+pymysql://{{ volume.database.user }}:{
 
 {%- if volume.backend is defined %}
 
-{%- for backend_name, backend in volume.get('backend', {}).iteritems() %}
+{%- for backend_name, backend in volume.get('backend', {}).items() %}
 
 {%- set backend_fragment = "cinder/files/backend/_" + backend.engine + ".conf" %}
 {%- include backend_fragment %}

@@ -39,7 +39,7 @@ doc:
         {%- if controller.backend is defined %}
         backends:
           value: |
-            {%- for backend_name, backend in controller.get('backend', {}).iteritems() %}
+            {%- for backend_name, backend in controller.get('backend', {}).items() %}
             * {{ backend_name }}:
               * storage engine: {{ backend.engine }}
               * volume type: {{ backend.type_name}}
@@ -80,7 +80,7 @@ doc:
         {%- if volume.backend is defined %}
         backends:
           value: |
-            {%- for backend_name, backend in volume.get('backend', {}).iteritems() %}
+            {%- for backend_name, backend in volume.get('backend', {}).items() %}
             * {{ backend_name }}:
               * storage engine: {{ backend.engine }}
               * volume type: {{ backend.type_name}}
