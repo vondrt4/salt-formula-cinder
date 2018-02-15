@@ -21,7 +21,7 @@ cinder_client_packages:
                        'endpoint_type': identity.get('endpoint_type', 'internalURL'),
                        'certificate': identity.get('certificate', client.cacert_file)} %}
 
-{%- for backend_name, backend in client.get('backend', {}).iteritems() %}
+{%- for backend_name, backend in client.get('backend', {}).items() %}
 
 cinder_type_create_{{ backend_name }}:
   cinderng.volume_type_present:
@@ -39,7 +39,7 @@ cinder_type_update_{{ backend_name }}:
   - require:
     - cinderng: cinder_type_create_{{ backend_name }}
 
-{%- for key_name, key_value in backend.get('key', {}).iteritems() %}
+{%- for key_name, key_value in backend.get('key', {}).items() %}
 
 cinder_type_update_{{ backend_name }}_{{ key_name }}:
   cinderng.volume_type_key_present:
