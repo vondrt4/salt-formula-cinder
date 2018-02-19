@@ -13,7 +13,7 @@ agent:
             port: 24224
         match:
           route_openstack_cinder:
-            tag: openstack.cinder.*
+            tag: openstack.cinder.**
             type: relabel
             label: openstack_cinder
 {%- if apache_wsgi %}
