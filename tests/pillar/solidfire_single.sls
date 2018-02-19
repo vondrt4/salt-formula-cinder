@@ -11,6 +11,7 @@ cinder:
         san_password: password
         clustername: cluster1
         sf_emulate_512: false
+        sf_api_port: 15443
     identity:
       engine: keystone
       host: 127.0.0.1
