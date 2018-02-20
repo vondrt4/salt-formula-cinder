@@ -536,6 +536,8 @@ Cinder setup with Solidfire
             san_password: password
             clustername: cluster1
             sf_emulate_512: false
+            sf_api_port: 14443
+            host: ctl01
 
 Cinder setup with Block Device driver
 
