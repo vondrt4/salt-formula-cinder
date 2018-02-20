@@ -680,6 +680,16 @@ Enable Barbican integration
         barbican:
           enabled: true
 
+
+Specify Keystone API version (v3 is default):
+
+.. code-block:: yaml
+
+    cinder:
+      controller:
+        identity:
+          api_version: v2.0
+
 Enhanced logging with logging.conf
 ----------------------------------
 
