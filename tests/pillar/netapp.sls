@@ -17,6 +17,15 @@ cinder:
       user: cinder
       password: pwd
       region: regionOne
+    logging:
+      log_appender: false
+      log_handlers:
+        watchedfile:
+          enabled: true
+        fluentd:
+          enabled: false
+        ossyslog:
+          enabled: false
     database:
       engine: mysql
       host: 127.0.0.1

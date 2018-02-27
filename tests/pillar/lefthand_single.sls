@@ -24,6 +24,15 @@ cinder:
     glance:
         host: 127.0.0.1
         port: 9292
+    logging:
+      log_appender: false
+      log_handlers:
+        watchedfile:
+          enabled: true
+        fluentd:
+          enabled: false
+        ossyslog:
+          enabled: false
     default_volume_type: 7k2SaS
     message_queue:
       engine: rabbitmq
@@ -65,6 +74,15 @@ cinder:
     glance:
         host: 127.0.0.1
         port: 9292
+    logging:
+      log_appender: false
+      log_handlers:
+        watchedfile:
+          enabled: true
+        fluentd:
+          enabled: false
+        ossyslog:
+          enabled: false
     default_volume_type: 7k2SaS
     message_queue:
       engine: rabbitmq
