@@ -11,6 +11,18 @@ cinder_client_packages:
 {%- set identity = salt['pillar.get']('keystone:client:server:'+client.identity) %}
 {%- endif %}
 
+{#- Keystone V3 is supported only from Ocata release (https://docs.openstack.org/releasenotes/python-cinderclient/ocata.html) #}
+{#- Therefore if api_version is not defined and OpenStack version is mitaka or newton use v2.0. #}
+{%- if 'api_version' in identity %}
+{%- set keystone_api_version = identity.get('api_version') %}
+{%- else %} 
+{%- if 'version' in client and client.version in ['mitaka', 'newton'] %}
+{%- set keystone_api_version = 'v2.0' %}
+{%- else %}
+{%- set keystone_api_version = 'v3' %}
+{%- endif %}
+{%- endif %}
+
 {%- set credentials = {'host': identity.host,
                        'user': identity.user,
                        'password': identity.password,
@@ -19,7 +31,8 @@ cinder_client_packages:
                        'protocol': identity.get('protocol', 'http'),
                        'region_name': identity.get('region_name', 'RegionOne'),
                        'endpoint_type': identity.get('endpoint_type', 'internalURL'),
-                       'certificate': identity.get('certificate', client.cacert_file)} %}
+                       'certificate': identity.get('certificate', client.cacert_file),
+                       'api_version': keystone_api_version} %}
 
 {%- for backend_name, backend in client.get('backend', {}).items() %}
 

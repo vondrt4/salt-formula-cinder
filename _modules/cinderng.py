@@ -32,10 +32,11 @@ def _authng(profile=None):
         'username': profile['user'],
         'password': profile['password'],
         'project_id': profile['project_id'],
-        'auth_url': "{}://{}:{}/v2.0".format(
+        'auth_url': "{}://{}:{}/{}".format(
             profile['protocol'],
             profile['host'],
-            profile['port']
+            profile['port'],
+            profile.get('api_version', 'v3')
         ),
         'endpoint_type': profile['endpoint_type'],
         'certificate': profile['certificate'],
