@@ -9,7 +9,7 @@ server:
 {%- raw %}
     CinderAPIDown:
       if: >-
-        max(openstack_api_check_status{service=~"cinder.*"}) by (service) == 0
+        max(openstack_api_check_status{service=~"cinder.*"}) == 0
       for: 2m
       labels:
         severity: down
