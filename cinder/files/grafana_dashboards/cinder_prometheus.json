@@ -72,7 +72,7 @@
           "tableColumn": "",
           "targets": [
             {
-              "expr": "min(openstack_api_check_status{service=~\"cinder.*\"})",
+              "expr": "max(openstack_api_check_status{service=~\"cinder.*\"})",
               "format": "time_series",
               "intervalFactor": 2,
               "legendFormat": "{{ service }}",
