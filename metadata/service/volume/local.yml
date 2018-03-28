@@ -52,5 +52,5 @@ parameters:
       cache:
         engine: memcached
         members:
-          host: ${_param:single_address}
+          - host: ${_param:single_address}
 
