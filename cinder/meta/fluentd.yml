@@ -1,7 +1,7 @@
 {%- from "cinder/map.jinja" import controller with context %}
 {%- if pillar.get('fluentd', {}).get('agent', {}).get('enabled', False) %}
 {%- set positiondb = pillar.fluentd.agent.dir.positiondb %}
-{%- set apache_wsgi = controller.get('enabled', False) and controller.version == 'ocata' %}
+{%- set apache_wsgi = controller.get('enabled', False) and controller.version not in ('juno', 'kilo', 'liberty', 'mitaka', 'newton') %}
 agent:
   config:
     label:
