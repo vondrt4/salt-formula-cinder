@@ -18,7 +18,7 @@ server:
       annotations:
         summary: "Cinder API outage"
         description: >-
-            Cinder API check for the every available in the Openstack service catalog Cinder endpoint is down.
+          Cinder API is not accessible for all available Cinder endpoints in the OpenStack service catalog.
     CinderAPIDown:
       if: >-
         openstack_api_check_status{name=~"cinder.*"} == 0
@@ -26,9 +26,9 @@ server:
         severity: major
         service: cinder
       annotations:
-        summary: "'{{ $labels.name }}' endpoint is down"
+        summary: "{{ $labels.name }} endpoint is not accessible"
         description: >-
-            Cinder API check for the '{{ $labels.name }}' endpoint is down.
+          Cinder API is not accessible for the {{ $labels.name }} endpoint.
     CinderAPIServiceDown:
       if: >-
         http_response_status{name=~"cinder-api"} == 0
@@ -37,9 +37,9 @@ server:
         severity: minor
         service: cinder
       annotations:
-        summary: "The HTTP check for the 'cinder-api' is down"
+        summary: "Host cinder-api endpoint is not accessible"
         description: >-
-            The HTTP check for the 'cinder-api' on the '{{ $labels.host }}' is down for 2 minutes.
+          The host cinder-api endpoint on the {{ $labels.host }} node is not accessible for at least 2 minutes.
     CinderServiceDown:
       if: >-
           openstack_cinder_service_state == 0
@@ -47,45 +47,40 @@ server:
         severity: minor
         service: cinder
       annotations:
-        summary: "The '{{ $labels.binary }}' is in down state"
+        summary: "{{ $labels.binary }} service is down"
         description: >-
-            The '{{ $labels.binary }}' on the '{{ $labels.host }}' is in down state.
+          The {{ $labels.binary }} service on the {{ $labels.hostname }} node is down.
 {%- endraw %}
     CinderServicesDownMinor:
       if: >-
           count(openstack_cinder_service_state == 0) by (binary) >= on (binary) count(openstack_cinder_service_state) by (binary) * {{minor_threshold}} and count(openstack_cinder_service_state == 0) by (binary) < on (binary) count(openstack_cinder_service_state) by (binary) * {{major_threshold}}
-{%- raw %}
       labels:
         severity: minor
         service: cinder
       annotations:
-        summary: "Medium percentage of '{{ $labels.binary }}' services are in down state"
+        summary: "{{minor_threshold * 100}}%{%- raw %} of {{ $labels.binary }} services are down"
         description: >-
-            {{ $value }} '{{ $labels.binary }}' services are in down state {%- endraw %}(More than {{minor_threshold * 100}}% and less than {{major_threshold * 100}}%).{%- raw %}
-{%- endraw %}
+          {{ $value }} {{ $labels.binary }} services are down {%- endraw %}(at least {{minor_threshold * 100}}%).
     CinderServicesDownMajor:
       if: >-
           count(openstack_cinder_service_state == 0) by (binary) >= on (binary) count(openstack_cinder_service_state) by (binary) * {{major_threshold}}
-{%- raw %}
       labels:
         severity: major
         service: cinder
       annotations:
-        summary: "High percentage of '{{ $labels.binary }}' services are in down state"
+        summary: "{{major_threshold * 100}}%{%- raw %} of {{ $labels.binary }} services are down"
         description: >-
-            {{ $value }} '{{ $labels.binary }}' services are in down state {%- endraw %}(More than {{major_threshold * 100}}%).{%- raw %}
-{%- endraw %}
+          {{ $value }} {{ $labels.binary }} services are down {%- endraw %}(at least {{major_threshold * 100}}%).{%- raw %}
     CinderServiceOutage:
       if: >-
         count(openstack_cinder_service_state == 0) by (binary) == on (binary) count(openstack_cinder_service_state) by (binary)
-{%- raw %}
       labels:
         severity: critical
         service: cinder
       annotations:
-        summary: "'{{ $labels.binary }}' service outage"
+        summary: "{{ $labels.binary }} service outage"
         description: >-
-            All '{{ $labels.binary }}' services are in down state.
+          All {{ $labels.binary }} services are down.
 {%- endraw %}
 {%- endif %}
     CinderErrorLogsTooHigh:
@@ -97,6 +92,6 @@ server:
         severity: warning
         service: cinder
       annotations:
-        summary: "There are too many errors in Cinder logs"
-        description: "The rate of errors in Cinder logs over the last 5 minutes is too high on node '{{ $labels.host }}' (current value={{ $value }}, threshold={%- endraw %}{{ log_threshold }})."
+        summary: "High number of errors in Cinder logs"
+        description: "The rate of errors in Cinder logs over the last 5 minutes is too high on the {{ $labels.host }} node (current value={{ $value }}, threshold={%- endraw %}{{ log_threshold }})."
 {%- endif %}
