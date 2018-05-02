@@ -48,6 +48,8 @@ mysql_ca_cinder_volume:
 {%- endif %}
 {%- endif %}
 
+{%- set cinder_log_services = volume.services %}
+
 {%- if not pillar.cinder.get('controller', {}).get('enabled', False) %}
 
 /etc/cinder/cinder.conf:
@@ -65,9 +67,34 @@ mysql_ca_cinder_volume:
     - pkg: cinder_volume_packages
 
 {%- if volume.backup.engine != None %}
-  {%- set cinder_log_services = volume.services + volume.backup.services %}
-{%- else %}
-  {%- set cinder_log_services = volume.services %}
+  {%- do cinder_log_services.extend(volume.backup.services) %}
+{%- endif %}
+
+{%- if volume.backup.engine != None %}
+
+cinder_backup_packages:
+  pkg.installed:
+  - names: {{ volume.backup.pkgs }}
+
+cinder_backup_services:
+  service.running:
+  - names: {{ volume.backup.services }}
+  - enable: true
+  {%- if grains.get('noservices') %}
+  - onlyif: /bin/false
+  {%- endif %}
+  - watch:
+    {%- if volume.message_queue.get('ssl',{}).get('enabled', False) %}
+    - file: rabbitmq_ca_cinder_volume
+    {%- endif %}
+    {%- if volume.database.get('ssl',{}).get('enabled', False) %}
+    - file: mysql_ca_cinder_volume
+    {%- endif %}
+    - file: /etc/cinder/cinder.conf
+    - file: /etc/cinder/api-paste.ini
+
+{%- endif %}
+
 {%- endif %}
 
 {% for service_name in cinder_log_services %}
@@ -116,44 +143,17 @@ cinder_volume_fluentd_logger_package:
 {%- if volume.logging.log_handlers.get('fluentd', {}).get('enabled', False) %}
       - pkg: cinder_volume_fluentd_logger_package
 {%- endif %}
-{%- if volume.backup.engine != None %}
+{%- if not pillar.cinder.get('controller', {}).get('enabled', False) and volume.backup.engine != None %}
       - pkg: cinder_backup_packages
 {%- endif %}
     - watch_in:
       - service: cinder_volume_services
-{%- if volume.backup.engine != None %}
+{%- if not pillar.cinder.get('controller', {}).get('enabled', False) and volume.backup.engine != None %}
       - pkg: cinder_backup_services
 {%- endif %}
 {% endfor %}
 
 {% endif %}
-
-{%- if volume.backup.engine != None %}
-
-cinder_backup_packages:
-  pkg.installed:
-  - names: {{ volume.backup.pkgs }}
-
-cinder_backup_services:
-  service.running:
-  - names: {{ volume.backup.services }}
-  - enable: true
-  {%- if grains.get('noservices') %}
-  - onlyif: /bin/false
-  {%- endif %}
-  - watch:
-    {%- if volume.message_queue.get('ssl',{}).get('enabled', False) %}
-    - file: rabbitmq_ca_cinder_volume
-    {%- endif %}
-    {%- if volume.database.get('ssl',{}).get('enabled', False) %}
-    - file: mysql_ca_cinder_volume
-    {%- endif %}
-    - file: /etc/cinder/cinder.conf
-    - file: /etc/cinder/api-paste.ini
-
-{%- endif %}
-
-{%- endif %}
 
 cinder_volume_services:
   service.running:
