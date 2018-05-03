@@ -1,5 +1,6 @@
 # -*- coding: utf-8 -*-
 import logging
+import time
 
 LOG = logging.getLogger(__name__)
 
@@ -45,6 +46,22 @@ def _authng(profile=None):
     }
     return credentials
 
+def retries(func):
+    def func_wrapper(*args, **kwargs):
+        retries = kwargs.get('retries', 3)
+        timeout = kwargs.get('timeout', 5)
+        res = None
+        for i in range(retries):
+            try:
+                res = func(*args, **kwargs)
+            except Exception as e:
+                if i == retries - 1:
+                    raise e
+                    time.sleep(timeout)
+                else:
+                    break
+        return res
+    return func_wrapper
 
 def create_conn(cred=None):
     """
@@ -63,7 +80,7 @@ def create_conn(cred=None):
     )
     return nt
 
-
+@retries
 def list_volumes(profile=None, **kwargs):
     """
     Return list of cinder volumes.
@@ -72,7 +89,7 @@ def list_volumes(profile=None, **kwargs):
     nt = create_conn(cred)
     return nt.volumes.list()
 
-
+@retries
 def list_volume_type(profile=None, **kwargs):
     """
     Return list of volume types
@@ -81,7 +98,7 @@ def list_volume_type(profile=None, **kwargs):
     nt = create_conn(cred)
     return nt.volume_types.list()
 
-
+@retries
 def get_volume_type(type_name, profile=None, **kwargs):
     """
     Returns id of the specified volume type name
@@ -103,7 +120,7 @@ def get_volume_type(type_name, profile=None, **kwargs):
     else:
         return
 
-
+@retries
 def create_volume_type(type_name, profile=None, **kwargs):
     """
     Create cinder volume type
@@ -120,7 +137,7 @@ def create_volume_type(type_name, profile=None, **kwargs):
     else:
         return 'exists'
 
-
+@retries
 def get_keys_volume_type(type_name, profile=None, **kwargs):
     """
     Return extra specs of the specified volume type.
@@ -135,7 +152,7 @@ def get_keys_volume_type(type_name, profile=None, **kwargs):
     else:
         return
 
-
+@retries
 def set_keys_volume_type(type_name, keys={}, profile=None, **kwargs):
     """
     Set extra specs of the specified volume type.
