@@ -53,7 +53,7 @@ server:
 {%- endraw %}
     CinderServicesDownMinor:
       if: >-
-          count(openstack_cinder_service_state == 0) by (binary) >= on (binary) count(openstack_cinder_service_state) by (binary) * {{minor_threshold}} and count(openstack_cinder_service_state == 0) by (binary) < on (binary) count(openstack_cinder_service_state) by (binary) * {{major_threshold}}
+          count(openstack_cinder_service_state == 0) by (binary) >= on (binary) count(openstack_cinder_service_state) by (binary) * {{minor_threshold}}
       labels:
         severity: minor
         service: cinder
