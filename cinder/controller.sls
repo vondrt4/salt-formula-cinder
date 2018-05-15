@@ -4,6 +4,10 @@
 {%- set user = controller %}
 {%- include "cinder/user.sls" %}
 
+{%- if controller.version not in ["juno", "kilo", "liberty", "mitaka", "newton", "ocata", "pike"] %}
+  {%- do controller.pkgs.remove('cinder-api') %}
+{%- endif %}
+
 cinder_controller_packages:
   pkg.installed:
   - names: {{ controller.pkgs }}
@@ -28,7 +32,7 @@ cinder_controller_packages:
   {%- set cinder_log_services = controller.services %}
 {%- endif %}
 
-{%- if controller.version not in ('ocata','pike') %}
+{%- if controller.version not in ('ocata','pike','queens') %}
   {%- do cinder_log_services.append('cinder-api') %}
 {%- endif %}
 

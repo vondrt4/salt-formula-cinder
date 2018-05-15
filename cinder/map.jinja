@@ -18,6 +18,11 @@
         },
     'cinder_uid': 304,
     'cinder_gid': 304,
+    'message_queue': {
+       'rpc_response_timeout': 3600,
+       'control_exchange': 'cinder'
+    },
+    'enable_proxy_headers_parsing': true,
         'backup': {
           'pkgs': ['cinder-backup'],
           'services': ['cinder-backup'],
@@ -43,6 +48,11 @@
         },
     'cinder_uid': 304,
     'cinder_gid': 304,
+    'message_queue': {
+       'rpc_response_timeout': 3600,
+       'control_exchange': 'cinder'
+    },
+    'enable_proxy_headers_parsing': true,
         'backup': {
           'pkgs': ['cinder-backup'],
           'services': ['cinder-backup'],

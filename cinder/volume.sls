@@ -6,6 +6,10 @@
 {%- include "cinder/user.sls" %}
 {%- endif %}
 
+{%- if volume.version not in ["juno", "kilo", "liberty", "mitaka", "newton", "ocata", "pike"] %}
+  {%- do volume.services.append('apache2') %}
+{%- endif %}
+
 cinder_volume_packages:
   pkg.installed:
   - names: {{ volume.pkgs }}
