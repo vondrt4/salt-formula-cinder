@@ -126,5 +126,6 @@
         'error_log_rate': 0.2,
         'services_failed_warning_threshold_percent': 0.3,
         'services_failed_critical_threshold_percent': 0.6,
+        'endpoint_failed_major_threshold': 0.5,
     },
 }, grain='os_family', merge=salt['pillar.get']('cinder:monitoring')) %}

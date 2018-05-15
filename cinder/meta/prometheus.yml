@@ -8,6 +8,7 @@ server:
 {%- if is_controller %}
 {%- set minor_threshold = monitoring.services_failed_warning_threshold_percent|float %}
 {%- set major_threshold = monitoring.services_failed_critical_threshold_percent|float %}
+{%- set major_endpoint_threshold = monitoring.endpoint_failed_major_threshold|float %}
 {%- raw %}
     CinderAPIOutage:
       if: >-
@@ -40,6 +41,29 @@ server:
         summary: "Host cinder-api endpoint is not accessible"
         description: >-
           The host cinder-api endpoint on the {{ $labels.host }} node is not accessible for at least 2 minutes.
+{%- endraw %}
+    CinderAPIServiceDownMajor:
+      if: >-
+        count(http_response_status{name=~"cinder-api"} == 0) >= count(http_response_status{name=~"cinder-api"}) * {{ major_endpoint_threshold }}
+      for: 2m
+      labels:
+        severity: major
+        service: cinder
+      annotations:
+        summary: "{{major_endpoint_threshold * 100}}% of host cinder-api endpoints are not accessible"
+        description: >-
+          {% raw %}{{ $value }} host cinder-api endpoints are not accessible for at least 2 minutes (at least {% endraw %}{{major_endpoint_threshold * 100}}{% raw %}%).
+    CinderAPIServiceOutage:
+      if: >-
+        count(http_response_status{name=~"cinder-api"} == 0) == count(http_response_status{name=~"cinder-api"})
+      for: 2m
+      labels:
+        severity: critical
+        service: cinder
+      annotations:
+        summary: "Host cinder-api outage"
+        description: >-
+          All available host cinder-api endpoints are not accessible for at least 2 minutes.
     CinderServiceDown:
       if: >-
           openstack_cinder_service_state == 0
@@ -93,5 +117,6 @@ server:
         service: cinder
       annotations:
         summary: "High number of errors in Cinder logs"
-        description: "The rate of errors in Cinder logs over the last 5 minutes is too high on the {{ $labels.host }} node (current value={{ $value }}, threshold={%- endraw %}{{ log_threshold }})."
+        description: "The average per-second rate of errors in Cinder logs on the {{ $labels.host }} node is {{ $value }} (as measured over the last 5 minutes)."
+{%- endraw %}
 {%- endif %}
