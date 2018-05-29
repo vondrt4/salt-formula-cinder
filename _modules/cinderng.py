@@ -48,7 +48,7 @@ def _authng(profile=None):
 
 def retries(func):
     def func_wrapper(*args, **kwargs):
-        retries = kwargs.get('retries', 3)
+        retries = kwargs.get('retries', 5)
         timeout = kwargs.get('timeout', 5)
         res = None
         for i in range(retries):
