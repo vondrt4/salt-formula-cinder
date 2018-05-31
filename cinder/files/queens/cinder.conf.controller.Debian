@@ -3247,8 +3247,19 @@ cinder_internal_tenant_project_id={{ controller.cinder_internal_tenant_project_i
 {%- set _data = controller.identity %}
 [barbican]
 {%- include "oslo_templates/files/queens/castellan/_barbican.conf" %}
+{%- endif %}
+
 
 [key_manager]
+{%- if controller.get('key_manager', {}).backend is defined %}
+    {%- set key_backend = controller.key_manager.backend %}
+{%- elif controller.get('barbican', {}).get('enabled', False) %}
+    {%- set key_backend = 'barbican' %}
+{%- endif %}
+
+{%- set _data = {} %}
+{%- do _data.update(controller.identity) %}
+{%- do _data.update(controller.get('barbican', {})) %}
 #
 # From castellan.config
 #
@@ -3257,10 +3268,11 @@ cinder_internal_tenant_project_id={{ controller.cinder_internal_tenant_project_i
 # Default is  "barbican". Will support the  values earlier set using
 # [key_manager]/api_class for some time. (string value)
 # Deprecated group/name - [key_manager]/api_class
-backend = {{ _data.backend }}
-
-{%- include "oslo_templates/files/queens/keystoneauth/_type_"+ _data.get('auth_type','password') +".conf" %}
+#backend = barbican
+{%- if key_backend is defined %}
+backend = {{ key_backend }}
 {%- endif %}
+{%- include "oslo_templates/files/queens/keystoneauth/_type_"+ _data.get('auth_type','password') +".conf" %}
 
 [keystone_authtoken]
 {%- set _data = controller.get('identity', {}) %}

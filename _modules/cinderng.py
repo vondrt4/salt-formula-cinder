@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 import logging
 import time
+import functools
 
 LOG = logging.getLogger(__name__)
 
@@ -47,20 +48,19 @@ def _authng(profile=None):
     return credentials
 
 def retries(func):
+    @functools.wraps(func)
     def func_wrapper(*args, **kwargs):
         retries = kwargs.get('retries', 5)
         timeout = kwargs.get('timeout', 5)
         res = None
         for i in range(retries):
             try:
-                res = func(*args, **kwargs)
+                return func(*args, **kwargs)
             except Exception as e:
                 if i == retries - 1:
                     raise e
-                    time.sleep(timeout)
                 else:
-                    break
-        return res
+                    time.sleep(timeout)
     return func_wrapper
 
 def create_conn(cred=None):
