@@ -52,7 +52,7 @@ server:
       annotations:
         summary: "{{major_endpoint_threshold * 100}}% of cinder-api endpoints are not accessible"
         description: >-
-          {% raw %}{{ $value }} cinder-api endpoints (>= {% endraw %}{{major_endpoint_threshold * 100}%{% raw %}) are not accessible for 2 minutes.
+          {% raw %}{{ $value }} cinder-api endpoints (>= {% endraw %}{{major_endpoint_threshold * 100}}%{% raw %}) are not accessible for 2 minutes.
     CinderApiEndpointsOutage:
       if: >-
         count(http_response_status{name=~"cinder-api"} == 0) == count(http_response_status{name=~"cinder-api"})
