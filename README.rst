@@ -249,6 +249,17 @@ Configuration of policy.json file
           # Add key without value to remove line from policy.json
           'volume:extend':
 
+Default Cinder backend lvm_type setup
+
+.. code-block:: yaml
+
+    cinder:
+      volume:
+        enabled: true
+        backend:
+          # Type of LVM volumes to deploy; (default, thin, or auto). Auto defaults to thin if thin is supported.
+          lvm_type: auto
+
 
 Default Cinder setup with iSCSI target
 
