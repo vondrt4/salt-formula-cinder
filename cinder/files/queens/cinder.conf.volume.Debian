@@ -3277,6 +3277,7 @@ backend = {{ key_backend }}
 
 [keystone_authtoken]
 {%- set _data = volume.get('identity', {}) %}
+{%- if 'cacert_file' not in _data.keys() %}{% do _data.update({'cacert_file': volume.cacert_file}) %}{% endif %}
 {%- set auth_type = _data.get('auth_type', 'password') %}
 {%- include "oslo_templates/files/queens/keystonemiddleware/_auth_token.conf" %}
 {%- include "oslo_templates/files/queens/keystoneauth/_type_" + auth_type + ".conf" %}
