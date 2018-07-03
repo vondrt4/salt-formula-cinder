@@ -29,7 +29,7 @@ cinder_client_packages:
                        'project_id': identity.project,
                        'port': identity.get('port', 35357),
                        'protocol': identity.get('protocol', 'http'),
-                       'region_name': identity.get('region_name', 'RegionOne'),
+                       'region_name': identity.get('region', 'RegionOne'),
                        'endpoint_type': identity.get('endpoint_type', 'internalURL'),
                        'certificate': identity.get('certificate', client.cacert_file),
                        'api_version': keystone_api_version} %}

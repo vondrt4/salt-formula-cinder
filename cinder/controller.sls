@@ -302,7 +302,7 @@ cinder_controller_services:
                        'project_id': identity.tenant,
                        'port': identity.get('port', 35357),
                        'protocol': identity.get('protocol', 'http'),
-                       'region_name': identity.get('region_name', 'RegionOne'),
+                       'region_name': identity.get('region', 'RegionOne'),
                        'endpoint_type': identity.get('endpoint_type', 'internalURL'),
                        'certificate': identity.get('certificate', controller.cacert_file),
                        'api_version': keystone_api_version} %}
