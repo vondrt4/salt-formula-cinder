@@ -117,6 +117,20 @@ cinder-volume to role volume.
           enabled: true
 
 
+Volume vmware related options:
+
+.. code-block:: yaml
+
+    cinder:
+      volume:
+        backend:
+          vmware:
+            engine: vmware
+            host_username: vmware
+            host_password: vmware
+            cluster_names: vmware_cluster01,vmware_cluster02
+
+
 Enable CORS parameters
 
 .. code-block:: yaml
