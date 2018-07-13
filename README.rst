@@ -549,6 +549,8 @@ Cinder setup with Solidfire
             sf_emulate_512: false
             sf_api_port: 14443
             host: ctl01
+            #for compatibility with old versions
+            sf_account_prefix: PREFIX
 
 Cinder setup with Block Device driver
 
