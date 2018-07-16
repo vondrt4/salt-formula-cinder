@@ -130,14 +130,14 @@ cinder_volume_fluentd_logger_package:
 {{ service_name }}_logging_conf:
   file.managed:
     - name: /etc/cinder/logging/logging-{{ service_name }}.conf
-    - source: salt://cinder/files/logging.conf
+    - source: salt://oslo_templates/files/logging/_logging.conf
     - template: jinja
     - makedirs: True
     - user: cinder
     - group: cinder
     - defaults:
         service_name: {{ service_name }}
-        values: {{ volume }}
+        _data: {{ volume.logging }}
     - require:
       - pkg: cinder_volume_packages
 {%- if volume.logging.log_handlers.get('fluentd', {}).get('enabled', False) %}
