@@ -68,13 +68,13 @@ cinder_controller_fluentd_logger_package:
 cinder_general_logging_conf:
   file.managed:
     - name: /etc/cinder/logging.conf
-    - source: salt://cinder/files/logging.conf
+    - source: salt://oslo_templates/files/logging/_logging.conf
     - template: jinja
     - user: cinder
     - group: cinder
     - defaults:
         service_name: cinder
-        values: {{ controller }}
+        _data: {{ controller.logging }}
     - require:
       - pkg: cinder_controller_packages
 {%- if controller.logging.log_handlers.get('fluentd', {}).get('enabled', False) %}
@@ -96,14 +96,14 @@ cinder_general_logging_conf:
 {{ service_name }}_logging_conf:
   file.managed:
     - name: /etc/cinder/logging/logging-{{ service_name }}.conf
-    - source: salt://cinder/files/logging.conf
+    - source: salt://oslo_templates/files/logging/_logging.conf
     - template: jinja
     - makedirs: True
     - user: cinder
     - group: cinder
     - defaults:
         service_name: {{ service_name }}
-        values: {{ controller }}
+        _data: {{ controller.logging }}
     - require:
       - pkg: cinder_controller_packages
 {%- if controller.logging.log_handlers.get('fluentd', {}).get('enabled', False) %}
