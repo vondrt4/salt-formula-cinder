@@ -69,7 +69,7 @@
           },
         },
     },
-}, merge=pillar.cinder.get('controller', {}), base='BaseDefaults') %}
+}, merge=pillar.get('cinder', {}).get('controller', {}), base='BaseDefaults') %}
 
 {% set volume = salt['grains.filter_by']({
     'BaseDefaults': default_params,
@@ -131,7 +131,7 @@
           },
         },
     },
-}, merge=pillar.cinder.get('volume', {}), base='BaseDefaults') %}
+}, merge=pillar.get('cinder', {}).get('volume', {}), base='BaseDefaults') %}
 
 {% set client = salt['grains.filter_by']({
     'BaseDefaults': default_params,
@@ -141,7 +141,7 @@
     'RedHat': {
         'pkgs': ['python-cinderclient']
     },
-}, merge=pillar.cinder.get('client', {}), base='BaseDefaults') %}
+}, merge=pillar.get('cinder', {}).get('client', {}), base='BaseDefaults') %}
 
 {% set monitoring = salt['grains.filter_by']({
     'default': {
