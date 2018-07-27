@@ -77,7 +77,8 @@ cinder-volume to role volume.
         cinder_internal_tenant_user_id: f46924c112a14c80ab0a24a613d95eef
         cinder_internal_tenant_project_id: b7455b8974bb4064ad247c8f375eae6c
         default_volume_type: 7k2SaS
-        nable_force_upload: true
+        enable_force_upload: true
+        my_ip: 192.168.0.254
         database:
           engine: mysql
           host: 127.0.0.1

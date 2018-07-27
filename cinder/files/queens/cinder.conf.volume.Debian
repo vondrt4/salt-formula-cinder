@@ -310,6 +310,9 @@ state_path = /var/lib/cinder
 
 # IP address of this host (host address value)
 #my_ip = <HOST_IP_ADDRESS>
+{%- if volume.my_ip is defined %}
+my_ip = {{ volume.my_ip }}
+{%- endif %}
 
 # A list of the URLs of glance API servers available to cinder
 # ([http[s]://][hostname|ip]:port). If protocol is not specified it defaults to
