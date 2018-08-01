@@ -48,6 +48,7 @@ cinder:
     backend:
       vmware:
         engine: vmware
+        type_name: vmware-driver
         host_username: vmware
         host_password: vmware
         cluster_name: vmware_cluster01
