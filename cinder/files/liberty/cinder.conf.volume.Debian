@@ -125,6 +125,7 @@ rabbit_port = {{ volume.message_queue.port }}
 rabbit_userid = {{ volume.message_queue.user }}
 rabbit_password = {{ volume.message_queue.password }}
 rabbit_virtual_host = {{ volume.message_queue.virtual_host }}
+rabbit_ha_queues={{ volume.message_queue.ha_queues }}
 kombu_reconnect_delay=5.0
 
 {%- if volume.identity.get('version', 2) == 2 %}
@@ -460,10 +461,12 @@ hp3par_iscsi_chap_enabled=false
 hp3par_snap_cpg={{ volume.storage.snapcpg }}
 
 # Time in hours to retain a snapshot. You can't delete it before this expires.
-hp3par_snapshot_retention=2
+#hp3par_snapshot_retention=2
 
 # Time in hours when a snapshot expires and is deleted. This must be larger than retention.
-hp3par_snapshot_expiration=4
+#hp3par_snapshot_expiration=4
+
+use_multipath_for_image_xfer = True
 
 {%- endfor %}
 
