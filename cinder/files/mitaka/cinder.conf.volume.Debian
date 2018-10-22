@@ -65,6 +65,7 @@ control_exchange=cinder
 
 volume_clear={{ volume.wipe_method }}
 
+volume_usage_audit_period = hour
 
 volume_name_template = volume-%s
 
