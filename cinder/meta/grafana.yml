@@ -1,0 +1,122 @@
+dashboard:
+{%- if pillar.get('fluentd', {}).get('agent', {}).get('enabled', False) %}
+  cinder_prometheus:
+    datasource: prometheus
+    format: json
+    template: cinder/files/grafana_dashboards/cinder_prometheus_fluentd.json
+{%- else %}
+  cinder_prometheus:
+    datasource: prometheus
+    format: json
+    template: cinder/files/grafana_dashboards/cinder_prometheus.json
+{%- endif %}
+  cinder_influxdb:
+    datasource: influxdb
+    format: json
+    template: cinder/files/grafana_dashboards/cinder_influxdb.json
+  service_level:
+    datasource: influxdb
+    row:
+      cinder-service-level:
+        title: Cinder Service Levels
+        panel:
+          cinder-control-uptime:
+            title: Cinder Control Uptime
+            target:
+              cinder-control-healthy-status:
+                alias: "Healthy"
+                rawQuery: true
+                query: SELECT count(value) FROM cluster_status WHERE environment_label = '$environment' AND cluster_name = 'cinder-control' AND value = 0 AND $timeFilter
+              cinder-control-degraded-unknwon-status:
+                alias: "Degraded or Unknwon"
+                rawQuery: true
+                query: SELECT count(value) FROM cluster_status WHERE environment_label = '$environment' AND cluster_name = 'cinder-control' AND (value = 1 OR value = 2 OR value = 3) AND $timeFilter
+              cinder-control-down-status:
+                alias: "Down"
+                rawQuery: true
+                query: SELECT count(value) FROM cluster_status WHERE environment_label = '$environment' AND cluster_name = 'cinder-control' AND value = 4 AND $timeFilter
+          cinder-data-uptime:
+            title: Cinder Data Uptime
+            target:
+              cinder-data-healthy-status:
+                alias: "Healthy"
+                rawQuery: true
+                query: SELECT count(value) FROM cluster_status WHERE environment_label = '$environment' AND cluster_name = 'cinder-data' AND value = 0 AND $timeFilter
+              cinder-data-degraded-unknwon-status:
+                alias: "Degraded or Unknwon"
+                rawQuery: true
+                query: SELECT count(value) FROM cluster_status WHERE environment_label = '$environment' AND cluster_name = 'cinder-data' AND (value = 1 OR value = 2 OR value = 3) AND $timeFilter
+              cinder-data-down-status:
+                alias: "Down"
+                rawQuery: true
+                query: SELECT count(value) FROM cluster_status WHERE environment_label = '$environment' AND cluster_name = 'cinder-data' AND value = 4 AND $timeFilter
+          cinder-api-availability:
+            title: Cinder API Availability (V1 & V2)
+            target:
+              cinder-api-up-status:
+                alias: "Up"
+                rawQuery: true
+                query: SELECT count(value) FROM openstack_check_api WHERE environment_label = '$environment' AND (service = 'cinder-api' OR service = 'cinder-v2-api') AND value = 1 AND $timeFilter
+              cinder-api-down-status:
+                alias: "Down"
+                rawQuery: true
+                query: SELECT count(value) FROM openstack_check_api WHERE environment_label = '$environment' AND (service = 'cinder-api' OR service = 'cinder-v2-api') AND value = 0 AND $timeFilter
+          cinder-api-requests:
+            title: Cinder API Requests
+            target:
+              cinder-api-okay-status:
+                alias: "Okay"
+                rawQuery: true
+                query: SELECT count(max) FROM openstack_cinder_http_response_times WHERE environment_label = '$environment' AND (http_status = '2xx' OR http_status = '3xx') AND $timeFilter
+              cinder-api-error-status:
+                alias: "Error"
+                rawQuery: true
+                query: SELECT count(max) FROM openstack_cinder_http_response_times WHERE environment_label = '$environment' AND http_status = '4xx' AND $timeFilter
+              cinder-api-fatal-status:
+                alias: "Fatal"
+                rawQuery: true
+                query: SELECT count(max) FROM openstack_cinder_http_response_times WHERE environment_label = '$environment' AND http_status = '5xx' AND $timeFilter
+  main_influxdb:
+    datasource: influxdb
+    row:
+      ost-control-plane:
+        title: OpenStack Control Plane
+        panel:
+          cinder:
+            title: Cinder
+            links:
+            - dashboard: Cinder
+              title: Cinder
+              type: dashboard
+            target:
+              cluster_status:
+                rawQuery: true
+                query: SELECT last(value) FROM cluster_status WHERE cluster_name = 'cinder-control' AND environment_label = '$environment' AND $timeFilter GROUP BY time($interval) fill(null)
+      ost-data-plane:
+        title: OpenStack Data Plane
+        panel:
+          cinder:
+            title: Cinder
+            links:
+            - dashboard: Cinder
+              title: Cinder
+              type: dashboard
+            target:
+              cluster_status:
+                rawQuery: true
+                query: SELECT last(value) FROM cluster_status WHERE cluster_name = 'cinder-data' AND environment_label = '$environment' AND $timeFilter GROUP BY time($interval) fill(null)
+  main_prometheus:
+    datasource: prometheus
+    row:
+      ost-control-plane:
+        title: OpenStack Control Plane
+        panel:
+          cinder:
+            title: Cinder
+            links:
+            - dashboard: Cinder
+              title: Cinder
+              type: dashboard
+            target:
+              cluster_status:
+                expr: avg(openstack_api_check_status{service=~"cinder.*"})

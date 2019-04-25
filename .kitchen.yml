@@ -1,0 +1,131 @@
+---
+driver:
+  name: docker
+  hostname: cinder.ci.local
+  use_sudo: false
+
+provisioner:
+  name: salt_solo
+  salt_install: bootstrap
+  salt_bootstrap_url: https://bootstrap.saltstack.com
+  salt_version: <%=ENV['SALT_VERSION'] || 'latest'%>
+  require_chef: false
+  log_level: error
+  formula: cinder
+  grains:
+    noservices: True
+  dependencies:
+    - name: linux
+      repo: git
+      source: https://github.com/salt-formulas/salt-formula-linux
+    - name: apache
+      repo: git
+      source: https://github.com/salt-formulas/salt-formula-apache
+    - name: keystone
+      repo: git
+      source: https://github.com/salt-formulas/salt-formula-keystone
+  state_top:
+    base:
+      "*":
+        - linux.system
+        - apache
+        - cinder
+  pillars:
+    top.sls:
+      base:
+        "*":
+          - linux_repo_openstack
+          - cinder
+          - release
+    release.sls:
+      cinder:
+        controller:
+          version: <%= ENV['OS_VERSION'] || 'ocata' %>
+        volume:
+          version: <%= ENV['OS_VERSION'] || 'ocata' %>
+  pillars-from-files:
+    linux_repo_openstack.sls: tests/pillar/repo_mcp_openstack_<%= ENV['OS_VERSION'] || 'ocata' %>.sls
+
+verifier:
+  name: inspec
+  sudo: true
+
+platforms:
+  - name: <%=ENV['PLATFORM'] ||  'saltstack-ubuntu-xenial-salt-stable' %>
+    driver_config:
+      image: <%=ENV['PLATFORM'] || 'epcim/salt-formulas:saltstack-ubuntu-xenial-salt-stable'%>
+      platform: ubuntu
+
+suites:
+
+  - name: ceph_single
+    provisioner:
+      pillars-from-files:
+        cinder.sls: tests/pillar/ceph_single.sls
+
+  - name: control_cluster
+    provisioner:
+      pillars-from-files:
+        cinder.sls: tests/pillar/control_cluster.sls
+      pillars:
+        release.sls:
+          cinder:
+            volume:
+              enabled: false
+
+  - name: control_single
+    provisioner:
+      pillars-from-files:
+        cinder.sls: tests/pillar/control_single.sls
+      pillars:
+        release.sls:
+          cinder:
+            volume:
+              enabled: false
+
+  - name: control_cluster
+    provisioner:
+      pillars-from-files:
+        cinder.sls: tests/pillar/control_cluster_intree_wsgi.sls
+
+  - name: gpfs_single
+    provisioner:
+      pillars-from-files:
+        cinder.sls: tests/pillar/gpfs_single.sls
+
+  - name: hp3par_single
+    provisioner:
+      pillars-from-files:
+        cinder.sls: tests/pillar/hp3par_single.sls
+
+  - name: lefthand_single
+    provisioner:
+      pillars-from-files:
+        cinder.sls: tests/pillar/lefthand_single.sls
+
+  - name: solidfire_single
+    provisioner:
+      pillars-from-files:
+        cinder.sls: tests/pillar/solidfire_single.sls
+
+  - name: storwize_single
+    provisioner:
+      pillars-from-files:
+        cinder.sls: tests/pillar/storwize_single.sls
+
+  - name: volume_single
+    provisioner:
+      pillars-from-files:
+        cinder.sls: tests/pillar/volume_single.sls
+
+  - name: vsp_single
+    provisioner:
+      pillars-from-files:
+        cinder.sls: tests/pillar/vsp_single.sls
+
+  - name: volume_single_barbican
+    provisioner:
+      pillars-from-files:
+        cinder.sls: tests/pillar/volume_single_barbican.sls
+
+# vim: ft=yaml sw=2 ts=2 sts=2 tw=125

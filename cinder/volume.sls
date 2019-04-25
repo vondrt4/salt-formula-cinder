@@ -1,8 +1,10 @@
 {%- from "cinder/map.jinja" import volume with context %}
 {%- if volume.enabled is defined and volume.enabled %}
 
-include:
-- cinder.user
+{%- if not pillar.cinder.get('controller', {}).get('enabled', False) %}
+{%- set user = volume %}
+{%- include "cinder/user.sls" %}
+{%- endif %}
 
 cinder_volume_packages:
   pkg.installed:
@@ -18,7 +20,37 @@ cinder_volume_packages:
   - require_in:
     - service: cinder_volume_services
 
-{%- if pillar.cinder.controller.enabled is not defined or not pillar.cinder.controller.enabled %}
+{%- if volume.message_queue.get('ssl',{}).get('enabled', False) %}
+rabbitmq_ca_cinder_volume:
+{%- if volume.message_queue.ssl.cacert is defined %}
+  file.managed:
+    - name: {{ volume.message_queue.ssl.cacert_file }}
+    - contents_pillar: cinder:volume:message_queue:ssl:cacert
+    - mode: 0444
+    - makedirs: true
+{%- else %}
+  file.exists:
+   - name: {{ volume.message_queue.ssl.get('cacert_file', volume.cacert_file) }}
+{%- endif %}
+{%- endif %}
+
+{%- if volume.database.get('ssl',{}).get('enabled', False) %}
+mysql_ca_cinder_volume:
+{%- if volume.database.ssl.cacert is defined %}
+  file.managed:
+    - name: {{ volume.database.ssl.cacert_file }}
+    - contents_pillar: cinder:volume:database:ssl:cacert
+    - mode: 0444
+    - makedirs: true
+{%- else %}
+  file.exists:
+   - name: {{ volume.database.ssl.get('cacert_file', volume.cacert_file) }}
+{%- endif %}
+{%- endif %}
+
+{%- set cinder_log_services = volume.services %}
+
+{%- if not pillar.cinder.get('controller', {}).get('enabled', False) %}
 
 /etc/cinder/cinder.conf:
   file.managed:
@@ -34,13 +66,109 @@ cinder_volume_packages:
   - require:
     - pkg: cinder_volume_packages
 
+{%- if volume.backup.engine != None %}
+  {%- do cinder_log_services.extend(volume.backup.services) %}
 {%- endif %}
+
+{%- if volume.backup.engine != None %}
+
+cinder_backup_packages:
+  pkg.installed:
+  - names: {{ volume.backup.pkgs }}
+
+cinder_backup_services:
+  service.running:
+  - names: {{ volume.backup.services }}
+  - enable: true
+  {%- if grains.get('noservices') %}
+  - onlyif: /bin/false
+  {%- endif %}
+  - watch:
+    {%- if volume.message_queue.get('ssl',{}).get('enabled', False) %}
+    - file: rabbitmq_ca_cinder_volume
+    {%- endif %}
+    {%- if volume.database.get('ssl',{}).get('enabled', False) %}
+    - file: mysql_ca_cinder_volume
+    {%- endif %}
+    - file: /etc/cinder/cinder.conf
+    - file: /etc/cinder/api-paste.ini
+
+{%- endif %}
+
+{%- endif %}
+
+{% for service_name in cinder_log_services %}
+{{ service_name }}_default:
+  file.managed:
+    - name: /etc/default/{{ service_name }}
+    - source: salt://cinder/files/default
+    - template: jinja
+    - defaults:
+        service_name: {{ service_name }}
+        values: {{ volume }}
+    - require:
+      - pkg: cinder_volume_packages
+{%- if volume.backup.engine != None %}
+      - pkg: cinder_backup_packages
+{%- endif %}
+    - watch_in:
+      - service: cinder_volume_services
+{%- if volume.backup.engine != None %}
+      - pkg: cinder_backup_services
+{%- endif %}
+{% endfor %}
+
+{% if volume.logging.log_appender %}
+
+{%- if volume.logging.log_handlers.get('fluentd', {}).get('enabled', False) %}
+cinder_volume_fluentd_logger_package:
+  pkg.installed:
+    - name: python-fluent-logger
+{%- endif %}
+
+{% for service_name in cinder_log_services %}
+{{ service_name }}_logging_conf:
+  file.managed:
+    - name: /etc/cinder/logging/logging-{{ service_name }}.conf
+    - source: salt://oslo_templates/files/logging/_logging.conf
+    - template: jinja
+    - makedirs: True
+    - user: cinder
+    - group: cinder
+    - defaults:
+        service_name: {{ service_name }}
+        _data: {{ volume.logging }}
+    - require:
+      - pkg: cinder_volume_packages
+{%- if volume.logging.log_handlers.get('fluentd', {}).get('enabled', False) %}
+      - pkg: cinder_volume_fluentd_logger_package
+{%- endif %}
+{%- if not pillar.cinder.get('controller', {}).get('enabled', False) and volume.backup.engine != None %}
+      - pkg: cinder_backup_packages
+{%- endif %}
+    - watch_in:
+      - service: cinder_volume_services
+{%- if not pillar.cinder.get('controller', {}).get('enabled', False) and volume.backup.engine != None %}
+      - pkg: cinder_backup_services
+{%- endif %}
+{% endfor %}
+
+{% endif %}
 
 cinder_volume_services:
   service.running:
   - names: {{ volume.services }}
   - enable: true
+  {%- if grains.get('noservices') %}
+  - onlyif: /bin/false
+  {%- endif %}
   - watch:
+    {%- if volume.message_queue.get('ssl',{}).get('enabled', False) %}
+    - file: rabbitmq_ca_cinder_volume
+    {%- endif %}
+    {%- if volume.database.get('ssl',{}).get('enabled', False) %}
+    - file: mysql_ca_cinder_volume
+    {%- endif %}
     - file: /etc/cinder/cinder.conf
     - file: /etc/cinder/api-paste.ini
 
@@ -55,9 +183,31 @@ cinder_metering_cron:
 
 {%- endif %}
 
-{%- if volume.storage.engine == 'iscsi' %}
+{%- if volume.backend is defined %}
 
-cinder_iscsi_packages:
+{%- for backend_name, backend in volume.get('backend', {}).items() %}
+
+{%- if backend.get('engine') == 'nfs' or (backend.get('engine') == 'netapp' and backend.get('storage_protocol') == 'nfs') %}
+/etc/cinder/nfs_shares_{{ backend_name }}_for_cinder_volume:
+  file.managed:
+  - name: /etc/cinder/nfs_shares_{{ backend_name }}
+  - source: salt://cinder/files/{{ volume.version }}/nfs_shares
+  - defaults:
+      backend: {{ backend|yaml }}
+  - template: jinja
+  - require:
+    - pkg: cinder_volume_packages
+
+cinder_netapp_packages_for_cinder_volume:
+  pkg.installed:
+    - pkgs:
+      - nfs-common
+
+{%- endif %}
+
+{%- if backend.engine in ['iscsi' , 'hp_lefthand'] %}
+
+cinder_iscsi_packages_{{ loop.index }}:
   pkg.installed:
   - names:
     - iscsitarget
@@ -71,7 +221,7 @@ cinder_iscsi_packages:
   - source: salt://cinder/files/iscsitarget
   - template: jinja
   - require:
-    - pkg: cinder_iscsi_packages
+    - pkg: cinder_iscsi_packages_{{ loop.index }}
 
 cinder_scsi_service:
   service.running:
@@ -79,12 +229,15 @@ cinder_scsi_service:
     - iscsitarget
     - open-iscsi
   - enable: true
+  {%- if grains.get('noservices') %}
+  - onlyif: /bin/false
+  {%- endif %}
   - watch:
     - file: /etc/default/iscsitarget
 
 {%- endif %}
 
-{%- if volume.storage.engine == 'hitachi_vsp' %}
+{%- if backend.engine == 'hitachi_vsp' %}
 
 {%- if grains.os_family == 'Debian' and volume.version == 'juno' %}
 
@@ -104,7 +257,7 @@ cinder_hitachi_vps_dir:
 
 {%- endif %}
 
-{%- if volume.storage.engine == 'hp3par' %}
+{%- if backend.engine == 'hp3par' %}
 
 hp3parclient:
   pkg.latest:
@@ -112,22 +265,23 @@ hp3parclient:
 
 {%- endif %}
 
-{%- if volume.storage.engine == 'fujitsu' %}
+{%- if backend.engine == 'fujitsu' %}
 
-cinder_driver_fujitsu:
+cinder_driver_fujitsu_{{ loop.index }}:
   pkg.latest:
     - name: cinder-driver-fujitsu
+    - refresh: true
 
-{%- for type in volume.get('types', []) %}
-
-/etc/cinder/cinder_fujitsu_eternus_dx_{{ type.name }}.xml:
+/etc/cinder/cinder_fujitsu_eternus_dx_{{ backend_name }}.xml:
   file.managed:
   - source: salt://cinder/files/{{ volume.version }}/cinder_fujitsu_eternus_dx.xml
   - template: jinja
   - defaults:
-      volume_type_name: "{{ type.pool }}"
+      backend_name: "{{ backend_name }}"
   - require:
     - pkg: cinder-driver-fujitsu
+
+{%- endif %}
 
 {%- endfor %}
 

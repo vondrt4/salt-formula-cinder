@@ -1,15 +1,25 @@
 Source: salt-formula-cinder
-Maintainer: Jakub Pavlik <jakub.pavlik@tcpcloud.eu>
+Maintainer: PKG OpenStack <openstack-devel@lists.alioth.debian.org>
+Uploaders: Filip Pytloun <filip@pytloun.cz>,
+           Ondřej Nový <onovy@debian.org>,
 Section: admin
-Priority: optional
-Build-Depends: debhelper (>= 9)
+Priority: extra
+Build-Depends: debhelper (>= 9),
+               openstack-pkg-tools,
+Build-Depends-Indep: python-all,
+                     python-yaml,
+                     salt-formula-keystone,
 Standards-Version: 3.9.6
-Homepage: http://www.tcpcloud.eu
-Vcs-Browser: https://github.com/tcpcloud/salt-formula-cinder
-Vcs-Git: https://github.com/tcpcloud/salt-formula-cinder.git
+Homepage: https://wiki.openstack.org/wiki/OpenStackSalt
+Vcs-Browser: https://anonscm.debian.org/cgit/openstack/salt-formula-cinder.git/
+Vcs-Git: https://anonscm.debian.org/git/openstack/salt-formula-cinder.git
 
 Package: salt-formula-cinder
 Architecture: all
-Depends: ${misc:Depends}, salt-master, reclass
-Description: Cinder Salt formula
- Install and configure Cinder server and client.
+Depends: ${misc:Depends},
+Description: Salt formula for OpenStack Cinder
+ Salt is a powerful remote execution manager that can be used to
+ administer servers in a fast and efficient way.
+ .
+ This SaltStack formula manages both installation and configuration of
+ OpenStack Cinder.

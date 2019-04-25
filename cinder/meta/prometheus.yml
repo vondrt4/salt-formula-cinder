@@ -1,0 +1,122 @@
+{%- from "cinder/map.jinja" import controller, volume, monitoring with context %}
+{%- set is_controller = controller.get('enabled', False) %}
+{%- set is_volume = volume.get('enabled', False) %}
+
+{%- if is_controller or is_volume %}
+server:
+  alert:
+{%- if is_controller %}
+{%- set minor_threshold = monitoring.services_failed_warning_threshold_percent|float %}
+{%- set major_threshold = monitoring.services_failed_critical_threshold_percent|float %}
+{%- set major_endpoint_threshold = monitoring.endpoint_failed_major_threshold|float %}
+{%- raw %}
+    CinderApiOutage:
+      if: >-
+        max(openstack_api_check_status{name=~"cinder.*"}) == 0
+      labels:
+        severity: critical
+        service: cinder
+      annotations:
+        summary: "Cinder API outage"
+        description: >-
+          Cinder API is not accessible for all available Cinder endpoints in the OpenStack service catalog.
+    CinderApiDown:
+      if: >-
+        openstack_api_check_status{name=~"cinder.*"} == 0
+      labels:
+        severity: major
+        service: cinder
+      annotations:
+        summary: "{{ $labels.name }} endpoint is not accessible"
+        description: >-
+          Cinder API is not accessible for the {{ $labels.name }} endpoint.
+    CinderApiEndpointDown:
+      if: >-
+        http_response_status{name=~"cinder-api"} == 0
+      for: 2m
+      labels:
+        severity: minor
+        service: cinder
+      annotations:
+        summary: "Cinder-api endpoint is not accessible"
+        description: >-
+          The cinder-api endpoint on the {{ $labels.host }} node is not accessible for 2 minutes.
+{%- endraw %}
+    CinderApiEndpointsDownMajor:
+      if: >-
+        count(http_response_status{name=~"cinder-api"} == 0) >= count(http_response_status{name=~"cinder-api"}) * {{ major_endpoint_threshold }}
+      for: 2m
+      labels:
+        severity: major
+        service: cinder
+      annotations:
+        summary: "{{major_endpoint_threshold * 100}}% of cinder-api endpoints are not accessible"
+        description: >-
+          {% raw %}{{ $value }} cinder-api endpoints (>= {% endraw %}{{major_endpoint_threshold * 100}}%{% raw %}) are not accessible for 2 minutes.
+    CinderApiEndpointsOutage:
+      if: >-
+        count(http_response_status{name=~"cinder-api"} == 0) == count(http_response_status{name=~"cinder-api"})
+      for: 2m
+      labels:
+        severity: critical
+        service: cinder
+      annotations:
+        summary: "Cinder-api endpoints outage"
+        description: >-
+          All available cinder-api endpoints are not accessible for 2 minutes.
+    CinderServiceDown:
+      if: >-
+          openstack_cinder_service_state == 0
+      labels:
+        severity: minor
+        service: cinder
+      annotations:
+        summary: "{{ $labels.binary }} service is down"
+        description: >-
+          The {{ $labels.binary }} service on the {{ $labels.hostname }} node is down.
+{%- endraw %}
+    CinderServicesDownMinor:
+      if: >-
+          count(openstack_cinder_service_state == 0) by (binary) >= on (binary) count(openstack_cinder_service_state) by (binary) * {{minor_threshold}}
+      labels:
+        severity: minor
+        service: cinder
+      annotations:
+        summary: "{{minor_threshold * 100}}%{%- raw %} of {{ $labels.binary }} services are down"
+        description: >-
+          {{ $value }} {{ $labels.binary }} services (>= {%- endraw %}{{minor_threshold * 100}}%) are down.
+    CinderServicesDownMajor:
+      if: >-
+          count(openstack_cinder_service_state == 0) by (binary) >= on (binary) count(openstack_cinder_service_state) by (binary) * {{major_threshold}}
+      labels:
+        severity: major
+        service: cinder
+      annotations:
+        summary: "{{major_threshold * 100}}%{%- raw %} of {{ $labels.binary }} services are down"
+        description: >-
+          {{ $value }} {{ $labels.binary }} services (>= {%- endraw %}{{major_threshold * 100}}%{%- raw %}) are down.
+    CinderServiceOutage:
+      if: >-
+        count(openstack_cinder_service_state == 0) by (binary) == on (binary) count(openstack_cinder_service_state) by (binary)
+      labels:
+        severity: critical
+        service: cinder
+      annotations:
+        summary: "{{ $labels.binary }} service outage"
+        description: >-
+          All {{ $labels.binary }} services are down.
+{%- endraw %}
+{%- endif %}
+    CinderErrorLogsTooHigh:
+      {%- set log_threshold = monitoring.error_log_rate|float %}
+      if: >-
+        sum(rate(log_messages{service="cinder",level=~"(?i:(error|emergency|fatal))"}[5m])) without (level) > {{ log_threshold }}
+{%- raw %}
+      labels:
+        severity: warning
+        service: cinder
+      annotations:
+        summary: "High number of errors in Cinder logs"
+        description: "The average per-second rate of errors in Cinder logs on the {{ $labels.host }} node is {{ $value }} (as measured over the last 5 minutes)."
+{%- endraw %}
+{%- endif %}

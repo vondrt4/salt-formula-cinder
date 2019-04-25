@@ -1,0 +1,8 @@
+name: "cinder"
+version: "2016.4.1"
+source: "https://github.com/salt-formulas/salt-formula-cinder"
+dependencies:
+  - name: keystone
+    source: "https://github.com/salt-formulas/salt-formula-keystone"
+  - name: apache
+    source: "https://github.com/salt-formulas/salt-formula-apache"

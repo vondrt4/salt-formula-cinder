@@ -10,6 +10,8 @@ volume_name_template = volume-%s
 
 verbose = True
 
+osapi_volume_workers = {{ controller.get('volume_workers', '4') }}
+
 auth_strategy = keystone
 
 state_path = /var/lib/cinder
@@ -19,6 +21,9 @@ use_syslog=False
 
 glance_num_retries=0
 debug=False
+
+os_region_name={{ controller.identity.region }}
+allow_availability_zone_fallback = {{ controller.get('availability_zone_fallback', True) }}
 
 #glance_api_ssl_compression=False
 #glance_api_insecure=False
@@ -30,7 +35,29 @@ glance_port={{ controller.glance.port }}
 glance_api_version=2
 
 volume_backend_name=DEFAULT
+
+{%- if controller.backend is defined %}
+
+default_volume_type={{ controller.default_volume_type }}
+
+enabled_backends={% for backend_name, backend in controller.get('backend', {}).items() %}{{ backend_name }}{% if not loop.last %},{% endif %}{% endfor %}
+
+{%- else %}
+
 default_volume_type={% for type in controller.get('types', []) %}{% if loop.first %}{{ type.name }}{% endif %}{% endfor %}
+
+enabled_backends={% for type in controller.get('types', []) %}{{ type.backend }}{% if not loop.last %},{% endif %}{% endfor %}{% if controller.storage.engine == "openvstorage" %}{% for vpool in pillar.openvstorage.server.get('vpools', []) %}{{ vpool }}{% if not loop.last %},{% endif %}{% endfor %}{% endif %}
+
+{%- endif %}
+
+{%- if controller.storage_availability_zone is defined %}
+storage_availability_zone={{controller.storage_availability_zone}}
+{%- endif %}
+
+{%- if controller.default_availability_zone is defined %}
+default_availability_zone={{controller.default_availability_zone}}
+{%- endif %}
+
 
 #RPC response timeout recommended by Hitachi
 rpc_response_timeout=3600
@@ -39,14 +66,12 @@ rpc_response_timeout=3600
 rpc_backend=cinder.openstack.common.rpc.impl_kombu
 control_exchange=cinder
 
-
 volume_clear={{ controller.wipe_method }}
 
 {%- if controller.notification %}
 control_exchange = cinder
 notification_driver = messagingv2
 {%- endif %}
-
 
 volume_name_template = volume-%s
 
@@ -61,21 +86,41 @@ log_dir=/var/log/cinder
 use_syslog=false
 verbose=True
 lock_path=/var/lock/cinder
-
-enabled_backends={% for type in controller.get('types', []) %}{{ type.name }}{% if not loop.last %},{% endif %}{% endfor %}
+{%- if controller.nas_secure_file_permissions is defined %}
+nas_secure_file_permissions={{ controller.nas_secure_file_permissions }}
+{%- endif %}
+{%- if controller.nas_secure_file_operations is defined %}
+nas_secure_file_operations={{ controller.nas_secure_file_operations }}
+{%- endif %}
+{%- if controller.cinder_internal_tenant_user_id is defined %}
+cinder_internal_tenant_user_id={{ controller.cinder_internal_tenant_user_id }}
+{%- endif %}
+{%- if controller.cinder_internal_tenant_project_id is defined %}
+cinder_internal_tenant_project_id={{ controller.cinder_internal_tenant_project_id }}
+{%- endif %}
 
 [oslo_concurrency]
 
 lock_path=/var/lock/cinder
 
 [oslo_messaging_rabbit]
+{%- if controller.message_queue.members is defined %}
+rabbit_hosts = {% for member in controller.message_queue.members -%}
+                   {{ member.host }}:{{ member.get('port', 5672) }}
+                   {%- if not loop.last -%},{%- endif -%}
+               {%- endfor -%}
+{%- else %}
 rabbit_host = {{ controller.message_queue.host }}
 rabbit_port = {{ controller.message_queue.port }}
+{%- endif %}
+
 rabbit_userid = {{ controller.message_queue.user }}
 rabbit_password = {{ controller.message_queue.password }}
 rabbit_virtual_host = {{ controller.message_queue.virtual_host }}
 rabbit_ha_queues={{ controller.message_queue.ha_queues }}
 kombu_reconnect_delay=5.0
+
+{%- if controller.identity.get('version', 2) == 2 %}
 
 [keystone_authtoken]
 signing_dir=/tmp/keystone-signing-cinder
@@ -88,6 +133,27 @@ admin_user=cinder
 signing_dirname=/tmp/keystone-signing-cinder
 auth_uri=http://{{ controller.identity.host }}:{{ controller.identity.port }}
 
+{%- else %}
+
+[keystone_authtoken]
+signing_dir=/tmp/keystone-signing-cinder
+signing_dirname=/tmp/keystone-signing-cinder
+identity_uri = http://{{ controller.identity.host }}:35357/v3
+revocation_cache_time = 10
+auth_section = generic_password
+
+[generic_password]
+auth_plugin = password
+user_domain_id = {{ controller.identity.get('domain', 'default') }}
+project_domain_id = {{ controller.identity.get('domain', 'default') }}
+project_name = {{ controller.identity.tenant }}
+username = {{ controller.identity.user }}
+password = {{ controller.identity.password }}
+auth_uri=http://{{ controller.identity.host }}:5000/v3
+auth_url=http://{{ controller.identity.host }}:35357/v3
+
+{%- endif %}
+
 [database]
 idle_timeout=3600
 max_pool_size=30
@@ -95,13 +161,28 @@ max_retries=-1
 max_overflow=40
 connection = {{ controller.database.engine }}://{{ controller.database.user }}:{{ controller.database.password }}@{{ controller.database.host }}/{{ controller.database.name }}
 
+{# new way #}
+
+{%- if controller.backend is defined %}
+
+{%- for backend_name, backend in controller.get('backend', {}).items() %}
+
+{%- set backend_fragment = "cinder/files/backend/_" + backend.engine + ".conf" %}
+{%- include backend_fragment %}
+
+{%- endfor %}
+
+{%- else %}
+
+{# old way #}
+
 {%- if controller.storage.engine == "storwize" %}
 
 {%- for type in controller.get('types', []) %}
 
-[{{ type.name }}]
-volume_driver = cinder.volume.drivers.storwize_svc.StorwizeSVCDriver
-volume_backend_name={{ type.name }}
+[{{ type.backend }}]
+volume_driver = cinder.volume.drivers.ibm.storwize_svc.StorwizeSVCDriver
+volume_backend_name={{ type.backend }}
 san_ip={{ controller.storage.host }}
 san_ssh_port={{ controller.storage.port }}
 san_login={{ controller.storage.user }}
@@ -122,9 +203,9 @@ storwize_svc_multipath_enabled={{ controller.storage.multipath }}
 
 {%- for type in controller.get('types', []) %}
 
-[{{ type.name }}]
+[{{ type.backend }}]
 volume_driver = cinder.volume.drivers.hitachi.hbsd_fc.HBSDFCDriver
-volume_backend_name={{ type.name }}
+volume_backend_name={{ type.backend }}
 
 #
 # Options defined in cinder.volume.drivers.hitachi.hbsd_common
@@ -212,8 +293,8 @@ use_multipath_for_image_xfer=false
 
 {%- for type in controller.get('types', []) %}
 
-[{{ type.name }}]
-
+[{{ type.backend }}]
+volume_backend_name={{ type.backend }}
 volume_driver = cinder.volume.drivers.rbd.RBDDriver
 #
 # Options defined in cinder.volume.drivers.rbd
@@ -234,6 +315,7 @@ rbd_ceph_conf=/etc/ceph/ceph.conf
 # Flatten volumes created from snapshots to remove dependency
 # from volume to snapshot (boolean value)
 #rbd_flatten_volume_from_snapshot=false
+rbd_flatten_volume_from_snapshot={{ controller.storage.get('flatten_volume_from_snapshot', False)|lower }}
 
 # The libvirt uuid of the secret for the rbd_user volumes
 # (string value)
@@ -263,12 +345,11 @@ rbd_secret_uuid={{ controller.storage.secret_uuid }}
 
 {%- endif %}
 
-
 {%- if controller.storage.engine == "hp3par" %}
 
 {%- for type in controller.get('types', []) %}
 
-[{{ type.name }}]
+[{{ type.backend }}]
 
 hp3par_api_url={{ controller.storage.url }}
 
@@ -331,11 +412,30 @@ hp3par_snapshot_expiration=4
 
 {%- for type in controller.get('types', []) %}
 
-[{{ type.name }}]
-volume_backend_name={{ type.name }}
+[{{ type.backend }}]
+volume_backend_name={{ type.backend }}
 volume_driver=cinder.volume.drivers.fujitsu.fujitsu_eternus_dx_fc.FJDXFCDriver
-cinder_eternus_config_file=/etc/cinder/cinder_fujitsu_eternus_dx_{{ type.name }}.xml
+cinder_eternus_config_file=/etc/cinder/cinder_fujitsu_eternus_dx_{{ type.backend }}.xml
 
 {%- endfor %}
+
+{%- endif %}
+
+{%- if controller.storage.engine == "gpfs" %}
+
+{%- for type in controller.get('types', []) %}
+
+[{{ type.backend }}]
+volume_backend_name={{ type.backend }}
+volume_driver = cinder.volume.drivers.ibm.gpfs.GPFSDriver
+gpfs_mount_point_base={{ type.mount_point }}
+#gpfs_mount_point_base=/mnt/gpfs-openstack/cinder/gold
+gpfs_max_clone_depth=3
+gpfs_sparse_volumes=true
+gpfs_storage_pool=system
+
+{%- endfor %}
+
+{%- endif %}
 
 {%- endif %}
